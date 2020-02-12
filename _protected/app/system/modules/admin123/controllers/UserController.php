@@ -23,8 +23,8 @@ class UserController extends Controller
     const PROFILES_PER_PAGE = 15;
     const SEARCH_NOT_FOUND_REDIRECT_DELAY = 2; // Seconds
 
-    /** @var AdminCore */
-    private $oAdmin;
+    /** @var UserCore */
+    private $oUser;
 
     /** @var AdminModel */
     private $oAdminModel;
@@ -39,7 +39,7 @@ class UserController extends Controller
     {
         parent::__construct();
 
-        $this->oAdmin = new AdminCore;
+        $this->oUser = new UserCore;
         $this->oAdminModel = new AdminModel;
 
         // Assigns variables for views
@@ -174,7 +174,9 @@ class UserController extends Controller
                     self::SEARCH_NOT_FOUND_REDIRECT_DELAY
                 );
 
-                $this->displayPageNotFound('No results found. Please try again with wider/new search criteria');
+                $this->displayPageNotFound(
+                    t('No results found. Please try again with wider/new search criteria')
+                );
             } else {
                 // Add the JS file for the browse form
                 $this->design->addJs(PH7_STATIC . PH7_JS, 'form.js');
@@ -298,7 +300,7 @@ class UserController extends Controller
         $iId = $this->httpRequest->post('id');
 
         if ($this->oAdminModel->ban($iId, 1)) {
-            $this->oAdmin->clearReadProfileCache($iId);
+            $this->oUser->clearReadProfileCache($iId);
             $this->sMsg = t('The profile has been banned.');
         } else {
             $this->sMsg = t('Oops! An error has occurred while banishment the profile.');
@@ -315,7 +317,7 @@ class UserController extends Controller
         $iId = $this->httpRequest->post('id');
 
         if ($this->oAdminModel->ban($iId, 0)) {
-            $this->oAdmin->clearReadProfileCache($iId);
+            $this->oUser->clearReadProfileCache($iId);
             $this->sMsg = t('The profile has been unbanned.');
         } else {
             $this->sMsg = t('Oops! An error has occurred while unban the profile.');
@@ -329,16 +331,24 @@ class UserController extends Controller
 
     public function delete()
     {
-        $aData = explode('_', $this->httpRequest->post('id'));
-        $iId = (int)$aData[0];
-        $sUsername = (string)$aData[1];
+        try {
+            $aData = explode('_', $this->httpRequest->post('id'));
+            $iId = (int)$aData[0];
+            $sUsername = (string)$aData[1];
 
-        $this->oAdmin->delete($iId, $sUsername);
+            $this->oUser->delete($iId, $sUsername);
 
-        Header::redirect(
-            Uri::get(PH7_ADMIN_MOD, 'user', 'browse'),
-            t('The profile has been deleted.')
-        );
+            Header::redirect(
+                Uri::get(PH7_ADMIN_MOD, 'user', 'browse'),
+                t('The profile has been deleted.')
+            );
+        } catch (ForbiddenActionException $oExcept) {
+            Header::redirect(
+                Uri::get(PH7_ADMIN_MOD, 'user', 'browse'),
+                $oExcept->getMessage(),
+                Design::ERROR_TYPE
+            );
+        }
     }
 
     public function banAll()
@@ -351,7 +361,7 @@ class UserController extends Controller
 
                 $this->oAdminModel->ban($iId, 1);
 
-                $this->oAdmin->clearReadProfileCache($iId);
+                $this->oUser->clearReadProfileCache($iId);
             }
             $this->sMsg = t('The profile(s) has/have been banned.');
         }
@@ -371,7 +381,7 @@ class UserController extends Controller
                 $iId = (int)explode('_', $sAction)[0];
 
                 $this->oAdminModel->ban($iId, 0);
-                $this->oAdmin->clearReadProfileCache($iId);
+                $this->oUser->clearReadProfileCache($iId);
             }
             $this->sMsg = t('The profile(s) has/have been unbanned.');
         }
@@ -384,23 +394,31 @@ class UserController extends Controller
 
     public function deleteAll()
     {
-        if (!(new SecurityToken)->check('user_action')) {
-            $this->sMsg = Form::errorTokenMsg();
-        } elseif (count($this->httpRequest->post('action')) > 0) {
-            foreach ($this->httpRequest->post('action') as $sAction) {
-                $aData = explode('_', $sAction);
-                $iId = (int)$aData[0];
-                $sUsername = (string)$aData[1];
+        try {
+            if (!(new SecurityToken)->check('user_action')) {
+                $this->sMsg = Form::errorTokenMsg();
+            } elseif (count($this->httpRequest->post('action')) > 0) {
+                foreach ($this->httpRequest->post('action') as $sAction) {
+                    $aData = explode('_', $sAction);
+                    $iId = (int)$aData[0];
+                    $sUsername = (string)$aData[1];
 
-                $this->oAdmin->delete($iId, $sUsername);
+                    $this->oUser->delete($iId, $sUsername);
+                }
+                $this->sMsg = t('The profile(s) has/have been deleted.');
             }
-            $this->sMsg = t('The profile(s) has/have been deleted.');
-        }
 
-        Header::redirect(
-            Uri::get(PH7_ADMIN_MOD, 'user', 'browse'),
-            $this->sMsg
-        );
+            Header::redirect(
+                Uri::get(PH7_ADMIN_MOD, 'user', 'browse'),
+                $this->sMsg
+            );
+        } catch (ForbiddenActionException $oExcept) {
+            Header::redirect(
+                Uri::get(PH7_ADMIN_MOD, 'user', 'browse'),
+                $oExcept->getMessage(),
+                Design::ERROR_TYPE
+            );
+        }
     }
 
     /**
@@ -439,7 +457,7 @@ class UserController extends Controller
                 }
 
                 if (!empty($this->sMsg)) {
-                    // Set message
+                    // Set body message + footer
                     $this->view->content = t('Dear %0%,', $oUser->firstName) . '<br />' . $this->sMsg;
                     $this->view->footer = t('You are receiving this email because we received a registration application with "%0%" email address for %site_name% (%site_url%).', $oUser->email) . '<br />' .
                         t('If you think someone has used your email address without your knowledge to create an account on %site_name%, please contact us using our contact form available on our website.');
@@ -455,7 +473,7 @@ class UserController extends Controller
                     ];
                     (new Mail)->send($aInfo, $sMessageHtml);
 
-                    $this->oAdmin->clearReadProfileCache($oUser->profileId);
+                    $this->oUser->clearReadProfileCache($oUser->profileId);
 
                     $sOutputMsg = t('Done!');
                 } else {

@@ -2,7 +2,7 @@
 /**
  * @title          Chat Messenger Ajax
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / IM / Asset / Ajax
@@ -18,6 +18,7 @@ use PH7\Framework\Date\CDateTime;
 use PH7\Framework\Date\Various as VDate;
 use PH7\Framework\File\Import;
 use PH7\Framework\Http\Http;
+use PH7\Framework\Module\Various as SysMod;
 use PH7\Framework\Mvc\Model\DbConfig;
 use PH7\Framework\Mvc\Request\Http as HttpRequest;
 use PH7\Framework\Mvc\Router\Uri;
@@ -125,14 +126,18 @@ class MessengerAjax extends PermissionCore
         }
 
         if (!$this->isOnline($sFrom)) {
-            $sItems = t('You must have the ONLINE status in order to speak instantaneous.');
+            $sItems = t('You need the ONLINE status in order to speak instantaneous.');
         } elseif ($sTo !== 0 && !$this->isOnline($sTo)) {
-            $sItems = '<small><em>' . t("%0% is offline. Send a <a href='%1%'>Private Message</a> instead.", $sTo, Uri::get('mail', 'main', 'compose', $sTo)) . '</em></small>';
+            if (SysMod::isEnabled('mail')) {
+                $sItems = '<small><em>' . t("%0% is offline. Send a <a href='%1%'>Private Message</a> instead.", $sTo, Uri::get('mail', 'main', 'compose', $sTo)) . '</em></small>';
+            } else {
+                $sItems = '<small><em>' . t('%0% is currently offline. Why not to chat later on?', $sTo) . '</em></small>';
+            }
         } else {
             $this->oMessengerModel->update($sFrom, $sTo);
         }
 
-        if ($sItems != '') {
+        if ($sItems !== '') {
             $sItems = substr($sItems, 0, -1);
         }
 
@@ -161,7 +166,7 @@ class MessengerAjax extends PermissionCore
             }
         }
 
-        if ($sItems != '') {
+        if ($sItems !== '') {
             $sItems = substr($sItems, 0, -1);
         }
 
@@ -191,9 +196,13 @@ class MessengerAjax extends PermissionCore
         if (!$this->checkMembership() || !$this->group->instant_messaging) {
             $sMsgTransform = t("You need to <a href='%0%'>upgrade your membership</a> to be able to chat.", Uri::get('payment', 'main', 'index'));
         } elseif (!$this->isOnline($sFrom)) {
-            $sMsgTransform = t('You must have the ONLINE status in order to chat with other users.');
+            $sMsgTransform = t('You need the ONLINE status in order to chat with other users.');
         } elseif (!$this->isOnline($sTo)) {
-            $sMsgTransform = '<small><em>' . t("%0% is offline. Send a <a href='%1%'>Private Message</a> instead.", $sTo, Uri::get('mail', 'main', 'compose', $sTo)) . '</em></small>';
+            if (SysMod::isEnabled('mail')) {
+                $sMsgTransform = '<small><em>' . t("%0% is offline. Send a <a href='%1%'>Private Message</a> instead.", $sTo, Uri::get('mail', 'main', 'compose', $sTo)) . '</em></small>';
+            } else {
+                $sMsgTransform = '<small><em>' . t('%0% is currently offline. Maybe, try to chat later on? 😉', $sTo) . '</em></small>';
+            }
         } else {
             $this->oMessengerModel->insert($sFrom, $sTo, $sMsg, (new CDateTime)->get()->dateTime(self::DATETIME_FORMAT));
         }
@@ -203,7 +212,13 @@ class MessengerAjax extends PermissionCore
         unset($_SESSION['messenger_boxes'][$this->oHttpRequest->post('to')]);
 
         Http::setContentType('application/json');
-        echo $this->setJsonContent(['user' => $sFrom, 'msg' => $sMsgTransform], false);
+        echo $this->setJsonContent(
+            [
+                'user' => $sFrom,
+                'msg' => $sMsgTransform
+            ],
+            false
+        );
         exit;
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Xml / Controller
@@ -30,6 +30,7 @@ class MainController extends Controller
 
         $this->oDataModel = new DataCoreModel;
 
+        // Enable caching for all pages of this module
         $this->enableStaticTplCache();
     }
 
@@ -134,11 +135,6 @@ class MainController extends Controller
         }
     }
 
-    /**
-     * Enable caching for all pages of this module.
-     *
-     * @return void
-     */
     private function enableStaticTplCache()
     {
         $this->view->setCaching(true);

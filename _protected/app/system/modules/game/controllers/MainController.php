@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Game / Controller
@@ -54,7 +54,8 @@ class MainController extends Controller
         $this->oGameModel = new GameModel;
         $this->oPage = new Page;
 
-        $this->sMetaKeywords = t('game,free,flash,game site,flash game,games,gaming,online game'); // Predefined meta_keywords tags
+        // Predefined meta keyword tags
+        $this->sMetaKeywords = t('game,free,flash,game site,flash game,games,gaming,online game');
         $this->view->meta_keywords = $this->sMetaKeywords;
     }
 
@@ -125,7 +126,7 @@ class MainController extends Controller
     {
         $sCategory = str_replace('-', ' ', $this->httpRequest->get('name'));
         $sOrder = $this->httpRequest->get('order');
-        $iSort = $this->httpRequest->get('sort');
+        $iSort = $this->httpRequest->get('sort', 'int');
 
         $this->iTotalGames = $this->oGameModel->category(
             $sCategory,
@@ -178,11 +179,15 @@ class MainController extends Controller
 
     public function result()
     {
+        $sKeywords = $this->httpRequest->get('looking');
+        $sOrder = $this->httpRequest->get('order');
+        $iSort = $this->httpRequest->get('sort', 'int');
+
         $this->iTotalGames = $this->oGameModel->search(
-            $this->httpRequest->get('looking'),
+            $sKeywords,
             true,
-            $this->httpRequest->get('order'),
-            $this->httpRequest->get('sort'),
+            $sOrder,
+            $iSort,
             null,
             null
         );
@@ -194,10 +199,10 @@ class MainController extends Controller
         $this->view->current_page = $this->oPage->getCurrentPage();
 
         $oSearch = $this->oGameModel->search(
-            $this->httpRequest->get('looking'),
+            $sKeywords,
             false,
-            $this->httpRequest->get('order'),
-            $this->httpRequest->get('sort'),
+            $sOrder,
+            $iSort,
             $this->oPage->getFirstItem(),
             $this->oPage->getNbItemsPerPage()
         );

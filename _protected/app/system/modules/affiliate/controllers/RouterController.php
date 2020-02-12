@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Affiliate / Controller
@@ -20,12 +20,19 @@ class RouterController extends Controller
     public function refer()
     {
         if ($this->httpRequest->getExists('aff')) {
-            if ((new ExistsCoreModel)->username($this->httpRequest->get('aff'), DbTableName::AFFILIATE)) {
-                (new Affiliate)->addRefer($this->httpRequest->get('aff'));
-            }
+            $this->addReferer();
         }
 
         $this->redirectToWebsite();
+    }
+
+    private function addReferer()
+    {
+        $sUsername = $this->httpRequest->get('aff');
+
+        if ((new ExistsCoreModel)->username($sUsername, DbTableName::AFFILIATE)) {
+            (new Affiliate)->addRefer($sUsername);
+        }
     }
 
     /**
@@ -36,7 +43,6 @@ class RouterController extends Controller
     private function redirectToWebsite()
     {
         $sUrl = $this->registry->site_url . $this->httpRequest->get('action');
-
         Header::redirect($sUrl);
     }
 }

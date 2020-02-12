@@ -24,8 +24,7 @@ class MainController extends Controller
         parent::__construct();
 
         // Enable caching to all template pages of this module
-        $this->view->setCaching(self::HTML_CACHE_ENABLED);
-        $this->view->setCacheExpire(self::STATIC_CACHE_LIFETIME);
+        $this->enableStaticTplCache();
 
         // Global variable for all template pages of this module
         $this->view->admin_email = DbConfig::getSetting('adminEmail');
@@ -54,7 +53,11 @@ class MainController extends Controller
 
     public function faq()
     {
-        $this->design->addCss(PH7_LAYOUT . PH7_SYS . PH7_MOD . $this->registry->module . PH7_SH . PH7_TPL . PH7_TPL_MOD_NAME . PH7_SH . PH7_CSS, 'faq.css');
+        $this->design->addCss(
+            PH7_LAYOUT . PH7_SYS . PH7_MOD . $this->registry->module . PH7_SH . PH7_TPL . PH7_TPL_MOD_NAME . PH7_SH . PH7_CSS,
+            'faq.css'
+        );
+
         // divShow.js for the display/hide questions
         $this->design->addJs(PH7_STATIC . PH7_JS, 'divShow.js');
 
@@ -166,5 +169,11 @@ class MainController extends Controller
         $this->view->h1_title = $this->sTitle;
 
         $this->output();
+    }
+
+    private function enableStaticTplCache()
+    {
+        $this->view->setCaching(self::HTML_CACHE_ENABLED);
+        $this->view->setCacheExpire(self::STATIC_CACHE_LIFETIME);
     }
 }

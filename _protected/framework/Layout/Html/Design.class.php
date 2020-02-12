@@ -525,7 +525,7 @@ class Design
     {
         /** Check the type of message, otherwise it's the default one **/
         $sType = in_array($sType, self::MESSAGE_TYPES, true) ? $sType : self::SUCCESS_TYPE;
-        $sType = $sType === self::ERROR_TYPE ? 'danger' : $sType; // Now the "error" CSS class has become "danger", so we have to convert it
+        $sType = $sType === self::ERROR_TYPE ? 'danger' : $sType; // The "error" CSS class is now "danger", so convert it to the corresponding name
         $this->oSession->set(
             [
                 self::FLASH_MSG => $sMessage,
@@ -592,7 +592,7 @@ class Design
         if (SysMod::isEnabled('map')) {
             $sHtml = '<a href="' . Uri::get('map', 'country', 'index', $sCountry . PH7_SH . $sCity) . '" title="' . t('Meet New People in %0%, %1% with %site_name%!', $sCountryLang, $sCity) . '">' . $sCity . '</a>';
         } else {
-            $sHtml = '<abbr title="' . t('Meet New People in %0%, %1% thanks %site_name%!', $sCountryLang, $sCity) . '">' . $sCity . '</abbr>';
+            $sHtml = '<abbr title="' . t('Meet New People in %0%, %1% thanks to %site_name%!', $sCountryLang, $sCity) . '">' . $sCity . '</abbr>';
         }
 
         if (!$bPrint) {
@@ -954,8 +954,8 @@ HTML;
     /**
      * Useful HTML Header.
      *
-     * @param array $aMeta Default NULL
-     * @param bool $bLogo Default FALSE
+     * @param array $aMeta
+     * @param bool $bLogo
      *
      * @return void
      */
@@ -975,6 +975,10 @@ HTML;
 
         if (!empty($aMeta['keywords'])) {
             echo '<meta name="keywords" content="', $aMeta['keywords'], '" />';
+        }
+
+        if (!empty($aMeta['noindex'])) {
+            echo Meta::NOINDEX;
         }
 
         echo '<meta name="author" content="', Kernel::SOFTWARE_COMPANY, '" />

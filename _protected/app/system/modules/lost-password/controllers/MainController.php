@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Lost Password / Controller
@@ -74,16 +74,7 @@ class MainController extends Controller
      */
     public function account()
     {
-        if (UserCore::auth()) {
-            $sUrl = Uri::get('user', 'account', 'index');
-        } elseif (AffiliateCore::auth()) {
-            $sUrl = Uri::get('affiliate', 'account', 'index');
-        } elseif (AdminCore::auth()) {
-            $sUrl = Uri::get(PH7_ADMIN_MOD, 'main', 'index');
-        } else {
-            $sUrl = $this->registry->site_url;
-        }
-
+        $sUrl = $this->getUserHomepageUrl();
         Header::redirect($sUrl);
     }
 
@@ -135,6 +126,24 @@ class MainController extends Controller
             case DbTableName::ADMIN:
                 return Uri::get(PH7_ADMIN_MOD, 'main', 'login');
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getUserHomepageUrl()
+    {
+        if (UserCore::auth()) {
+            $sUrl = Uri::get('user', 'account', 'index');
+        } elseif (AffiliateCore::auth()) {
+            $sUrl = Uri::get('affiliate', 'account', 'index');
+        } elseif (AdminCore::auth()) {
+            $sUrl = Uri::get(PH7_ADMIN_MOD, 'main', 'index');
+        } else {
+            $sUrl = $this->registry->site_url;
+        }
+
+        return $sUrl;
     }
 
     /**

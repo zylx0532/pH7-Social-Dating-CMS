@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Affiliate / Controller
@@ -82,11 +82,15 @@ class AdminController extends Controller
 
     public function browse()
     {
+        $sKeywords = $this->httpRequest->get('looking');
+        $sOrder = $this->httpRequest->get('order');
+        $iSort = $this->httpRequest->get('sort', 'int');
+
         $this->iTotalUsers = $this->oAffModel->searchAff(
-            $this->httpRequest->get('looking'),
+            $sKeywords,
             true,
-            $this->httpRequest->get('order'),
-            $this->httpRequest->get('sort'),
+            $sOrder,
+            $iSort,
             null,
             null
         );
@@ -98,10 +102,10 @@ class AdminController extends Controller
         );
         $this->view->current_page = $oPage->getCurrentPage();
         $oSearch = $this->oAffModel->searchAff(
-            $this->httpRequest->get('looking'),
+            $sKeywords,
             false,
-            $this->httpRequest->get('order'),
-            $this->httpRequest->get('sort'),
+            $sOrder,
+            $iSort,
             $oPage->getFirstItem(),
             $oPage->getNbItemsPerPage()
         );
@@ -376,7 +380,7 @@ class AdminController extends Controller
 
                     // We leave the user in disapproval (but send an email). After we can ban or delete it.
                     $sSubject = t('Your membership account has been declined');
-                    $this->sMsg = t('Sorry, Your membership account has been declined.');
+                    $this->sMsg = t('Sorry, your affiliate application has been declined.');
                 } elseif ($iStatus === 1) {
                     // Approve user
                     $this->oAffModel->approve($oUser->profileId, 1, DbTableName::AFFILIATE);
@@ -385,7 +389,7 @@ class AdminController extends Controller
                     AffiliateCore::updateJoinCom($oUser->affiliatedId, $this->config, $this->registry);
 
                     $sSubject = t('Your membership account has been activated');
-                    $this->sMsg = t('Congratulations! Your account has been approved by our team of administrators.<br />You can now %0% to meeting new people!',
+                    $this->sMsg = t('Congratulations! Your account has been approved by %site_name% team.<br />You can now %0% and start making money by promotioning the website!',
                         '<a href="' . Uri::get('affiliate', 'home', 'login') . '"><b>' . t('log in') .
                         '</b></a>');
                 } else {
@@ -394,22 +398,7 @@ class AdminController extends Controller
                 }
 
                 if (!empty($this->sMsg)) {
-                    // Set message
-                    $this->view->content = t('Dear %0%,', $oUser->firstName) . '<br />' . $this->sMsg;
-                    $this->view->footer = t('You are receiving this email because we received a registration application with "%0%" email address for %site_name% (%site_url%).', $oUser->email) . '<br />' .
-                        t('If you think someone has used your email address without your knowledge to create an account on %site_name%, please contact us using our contact form available on our website.');
-
-                    // Send email
-                    $sMessageHtml = $this->view->parseMail(
-                        PH7_PATH_SYS . 'global/' . PH7_VIEWS . PH7_TPL_MAIL_NAME . '/tpl/mail/sys/core/moderate_registration.tpl',
-                        $oUser->email
-                    );
-                    $aInfo = [
-                        'to' => $oUser->email,
-                        'subject' => $sSubject
-                    ];
-                    (new Mail)->send($aInfo, $sMessageHtml);
-
+                    $this->sendRegistrationMail($sSubject, $oUser);
                     $this->oAff->clearReadProfileCache($oUser->profileId, DbTableName::AFFILIATE);
 
                     $sOutputMsg = t('Done!');
@@ -417,13 +406,41 @@ class AdminController extends Controller
                     $sOutputMsg = t('Error! Bad argument in the URL.');
                 }
             } else {
-                $sOutputMsg = t('The user is not found!');
+                $sOutputMsg = t("The requested user ID wasn't found.");
             }
         } else {
             $sOutputMsg = t('Error! Missing argument in the URL.');
         }
 
         return $sOutputMsg;
+    }
+
+    /**
+     * @param string $sSubject
+     * @param stdClass $oUser
+     *
+     * @return void
+     *
+     * @throws Framework\Layout\Tpl\Engine\PH7Tpl\Exception
+     */
+    private function sendRegistrationMail($sSubject, stdClass $oUser)
+    {
+        // Set body messages + footer
+        $this->view->content = t('Dear %0%,', $oUser->firstName) . '<br />' . $this->sMsg;
+        $this->view->footer = t('You are receiving this email because we received a registration application with "%0%" email address for %site_name% (%site_url%).', $oUser->email) . '<br />' .
+            t('If you think someone has used your email address without your knowledge to create an account on %site_name%, please contact us using our contact form available on our website.');
+
+        // Send email
+        $sMessageHtml = $this->view->parseMail(
+            PH7_PATH_SYS . 'global/' . PH7_VIEWS . PH7_TPL_MAIL_NAME . '/tpl/mail/sys/core/moderate_registration.tpl',
+            $oUser->email
+        );
+
+        $aInfo = [
+            'to' => $oUser->email,
+            'subject' => $sSubject
+        ];
+        (new Mail)->send($aInfo, $sMessageHtml);
     }
 
     /**
@@ -443,6 +460,8 @@ class AdminController extends Controller
             null,
             self::REDIRECTION_DELAY_IN_SEC
         );
-        $this->displayPageNotFound(t('Sorry, Your search returned no results!'));
+
+        $sErrorMsg = t('No affiliates have been found.');
+        $this->displayPageNotFound($sErrorMsg);
     }
 }

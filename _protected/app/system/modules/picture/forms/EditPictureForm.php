@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Picture / Form
@@ -43,8 +43,28 @@ class EditPictureForm
         );
         unset($oHttpRequest);
 
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Image Name:'), 'title', ['value' => $oPhoto->title, 'required' => 1, 'pattern' => $sTitlePattern, 'validation' => new \PFBC\Validation\RegExp($sTitlePattern)]));
-        $oForm->addElement(new \PFBC\Element\Textarea(t('Image Description:'), 'description', ['value' => $oPhoto->description, 'validation' => new \PFBC\Validation\Str(2, 190)]));
+        $oForm->addElement(
+            new \PFBC\Element\Textbox(
+                t('Image Name:'),
+                'title',
+                [
+                    'value' => $oPhoto->title,
+                    'required' => 1,
+                    'pattern' => $sTitlePattern,
+                    'validation' => new \PFBC\Validation\RegExp($sTitlePattern)
+                ]
+            )
+        );
+        $oForm->addElement(
+            new \PFBC\Element\Textarea(
+                t('Image Description:'),
+                'description',
+                [
+                    'value' => $oPhoto->description,
+                    'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH)
+                ]
+            )
+        );
         $oForm->addElement(new \PFBC\Element\Button);
         $oForm->render();
     }

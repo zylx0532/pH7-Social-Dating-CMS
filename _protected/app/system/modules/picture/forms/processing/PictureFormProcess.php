@@ -2,7 +2,7 @@
 /**
  * @title          Picture Form Process Class
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Picture / Form / Processing
@@ -112,7 +112,7 @@ class PictureFormProcess extends Form implements NudityDetectable
 
             $sFileName = Various::genRnd($oPicture1->getFileName(), 20);
 
-            $sFile1 = $sFileName . '-original.' . $oPicture1->getExt(); // Original
+            $sFile1 = $sFileName . '-original.' . $oPicture1->getExt(); // Original one
             $sFile2 = $sFileName . '-' . self::PICTURE2_SIZE . PH7_DOT . $oPicture2->getExt();
             $sFile3 = $sFileName . '-' . self::PICTURE3_SIZE . PH7_DOT . $oPicture3->getExt();
             $sFile4 = $sFileName . '-' . self::PICTURE4_SIZE . PH7_DOT . $oPicture4->getExt();
@@ -185,13 +185,30 @@ class PictureFormProcess extends Form implements NudityDetectable
      */
     private function getImageTitle(Image $oPicture)
     {
-        if ($this->httpRequest->postExists('title') &&
-            $this->str->length($this->str->trim($this->httpRequest->post('title'))) > 2
-        ) {
+        if ($this->isPhotoTitleEligible()) {
             return $this->httpRequest->post('title');
         }
 
-        // Otherwise get the name from the file name
+        // Otherwise get the name from the filename
+        return $this->getTitleFromFileName($oPicture);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPhotoTitleEligible()
+    {
+        return $this->httpRequest->postExists('title') &&
+            $this->str->length($this->str->trim($this->httpRequest->post('title'))) > 2;
+    }
+
+    /**
+     * @param Image $oPicture
+     *
+     * @return string
+     */
+    private function getTitleFromFileName(Image $oPicture)
+    {
         return $this->str->upperFirst(
             str_replace(
                 ['-', '_'],

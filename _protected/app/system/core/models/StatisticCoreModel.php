@@ -2,7 +2,7 @@
 /**
  * @title          Statistic Core Model Class
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Core / Model
@@ -33,7 +33,7 @@ class StatisticCoreModel extends StatisticModel
         $oCache = (new Cache)->start(self::CACHE_GROUP, 'dateofcreation', self::CACHE_LIFETIME);
 
         if (!$sSinceDate = $oCache->get()) {
-            $sSinceDate = Record::getInstance()->getOne(DbTableName::ADMIN, 'profileId', AdminCore::ROOT_PROILE_ID, 'joinDate')->joinDate;
+            $sSinceDate = Record::getInstance()->getOne(DbTableName::ADMIN, 'profileId', AdminCore::ROOT_PROFILE_ID, 'joinDate')->joinDate;
             $oCache->put($sSinceDate);
         }
         unset($oCache);

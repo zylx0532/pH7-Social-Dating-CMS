@@ -256,7 +256,7 @@ class SettingForm
 
         $oForm->addElement(new \PFBC\Element\Textbox(t('IP Restriction for Admin Panel Access:'), 'ip_login', ['description' => t('By entering <a href="%0%" title="Get your current IP address">your IP</a>, you will get a higher security and exclude all other people and bots that tried to login with another IP address even if the login is correct! Leave blank to disable this feature. Be careful, for using this feature you need to have a static IP (not a dynamic one). If you are not sure, please contact your ISP.', Ip::api()), 'value' => DbConfig::getSetting('ipLogin', '')]));
 
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Indicate a word that will replace the banned word in <a href="%0%">the list</a>.', Uri::get(PH7_ADMIN_MOD, 'file', 'protectededit', 'app/configs/bans/word.txt', false)), 'ban_word_replace', ['value' => DbConfig::getSetting('banWordReplace'), 'required' => 1]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Indicate a word that will replace the banned word in <a href="%0%">the list</a>.', Uri::get(PH7_ADMIN_MOD, 'file', 'protectededit', 'app/configs/banned/word.txt', false)), 'ban_word_replace', ['value' => DbConfig::getSetting('banWordReplace'), 'required' => 1]));
 
         $oForm->addElement(new \PFBC\Element\Select(t('Enable/Disable CSRF security tokens in forms:'), 'security_token_forms', ['1' => t('Enable'), '0' => t('Disable')], ['description' => t('Sometimes this protection can be annoying for users if there are not fast enough to fulfill the forms. However, if disabled, your website can be vulnerable on CSRF attacks in forms.'), 'value' => DbConfig::getSetting('securityToken'), 'required' => 1]));
 
@@ -341,11 +341,17 @@ class SettingForm
 
         $oForm->addElement(new \PFBC\Element\Color(t('Text:'), 'text_color', ['value' => DbConfig::getSetting('textColor')]));
 
+        $oForm->addElement(new \PFBC\Element\Color(t('First Heading (H1):'), 'heading1_color', ['value' => DbConfig::getSetting('heading1Color')]));
+
+        $oForm->addElement(new \PFBC\Element\Color(t('Second Heading (H2):'), 'heading2_color', ['value' => DbConfig::getSetting('heading2Color')]));
+
+        $oForm->addElement(new \PFBC\Element\Color(t('Third Heading (H3):'), 'heading3_color', ['value' => DbConfig::getSetting('heading3Color')]));
+
         $oForm->addElement(new \PFBC\Element\Color(t('Links:'), 'link_color', ['value' => DbConfig::getSetting('linkColor')]));
 
         $oForm->addElement(new \PFBC\Element\Color(t('Footer Links:'), 'footer_link_color', ['value' => DbConfig::getSetting('footerLinkColor')]));
 
-        $oForm->addElement(new \PFBC\Element\Color(t('Links hover:'), 'link_hover_color', ['value' => DbConfig::getSetting('linkHoverColor')]));
+        $oForm->addElement(new \PFBC\Element\Color(t('Links Hover:'), 'link_hover_color', ['value' => DbConfig::getSetting('linkHoverColor')]));
 
         $oForm->addElement(new \PFBC\Element\HTMLExternal(
             '<div class="right"><a href="' . Uri::get(PH7_ADMIN_MOD, 'setting', 'resetcolor', (new SecurityToken)->url(), false) . '">' . t('Reset Colors') . '</a></div>'

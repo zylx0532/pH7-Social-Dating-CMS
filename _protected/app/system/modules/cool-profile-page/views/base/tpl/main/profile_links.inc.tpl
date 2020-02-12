@@ -1,5 +1,5 @@
 <div class="row">
-    {if !$is_own_profile AND $is_im_enabled}
+    {if $is_im_enabled AND !$is_own_profile}
         <a class="vs_marg" rel="nofollow" href="{messenger_link}" title="{lang 'Chat'}">
             <i class="fa fa-comment-o chat"></i>
         </a>
@@ -20,7 +20,7 @@
     {/if}
 
     {if $is_friend_enabled AND !$is_own_profile}
-        <a class="vs_marg" ref="nofollow" href="{friend_link}">
+        <a class="vs_marg" rel="nofollow" href="{friend_link}">
             {if $is_approved_friend}
                 <i class="fa fa-user-times friend"></i>
             {elseif $is_pending_friend}

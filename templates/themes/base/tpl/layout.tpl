@@ -32,7 +32,7 @@
     <!-- Do not modify or remove this code! Think of those who spend a lot of time to develop this CMS & Framework for you -->
     <meta name="creator" content="pH7CMS, Pierre-Henry Soria - {software_url}" />
     <meta name="designer" content="pH7CMS, Pierre-Henry Soria - {software_url}" />
-    <meta name="generator" content="{software_name}  {software_version}" />
+    <meta name="generator" content="{software_name}, {software_version}" />
     <!-- End Copyright -->
 
     <!-- End Title and Meta -->
@@ -101,7 +101,7 @@
           </div>
       {/if}
 
-      {* Heading groups *}
+      {* Heading groups (H1 to H4) *}
       {main_include 'headings.inc.tpl'}
 
       {* Don't display the top middle banner on the the splash page *}
@@ -191,8 +191,10 @@
 
     <div class="clear"></div>
     <div class="right vs_marg">
-      <!-- Required for free version of MaxMind GeoDB. Ref: https://dev.maxmind.com/geoip/geoip2/geolite2/#License -->
-      <small class="small">This product includes GeoLite2 data created by MaxMind, available from <a href="http://www.maxmind.com" rel="nofollow" class="gray">http://www.maxmind.com</a></small>
+      {* Required for the GeoLite2 free version. Not needed if you purchase their full paid version *}
+      <small class="small">
+        {lang}We use GeoLite2 from <a href="http://www.maxmind.com" rel="nofollow" class="gray">MaxMind</a>{/lang}
+      </small>
     </div>
     <!-- End Footer -->
 

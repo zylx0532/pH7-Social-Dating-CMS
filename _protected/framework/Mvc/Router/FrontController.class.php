@@ -5,7 +5,7 @@
  * This class is used to instantiate the Controller and the action with the MVC pattern, in short it is the heart of pH7CMS's software.
  * It can also retrieve the URL roads, initialize the languages​​, themes, database, etc.
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2011-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Mvc / Router
@@ -891,21 +891,21 @@ final class FrontController
     {
         if ($sMsg !== null && isDebug()) {
             throw new PH7Exception($sMsg);
-        } else {
-            if ($iRedirect === null) {
-                $this->oRegistry->module = 'error';
+        }
 
-                // Reload the config.ini file for the "error" module
-                $this->oConfig->load(PH7_PATH_SYS . PH7_MOD . 'error' . PH7_DS . PH7_CONFIG . PH7_CONFIG_FILE);
-            } else {
-                Header::redirect(
-                    UriRoute::get(
-                        'error',
-                        'http',
-                        'index'
-                    )
-                );
-            }
+        if ($iRedirect === null) {
+            $this->oRegistry->module = 'error';
+
+            // Reload the config.ini file for the "error" module
+            $this->oConfig->load(PH7_PATH_SYS . PH7_MOD . 'error' . PH7_DS . PH7_CONFIG . PH7_CONFIG_FILE);
+        } else {
+            Header::redirect(
+                UriRoute::get(
+                    'error',
+                    'http',
+                    'index'
+                )
+            );
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Video / Controller
@@ -151,7 +151,10 @@ class MainController extends Controller
             $this->view->meta_description = t('Browse Videos From %0% | Video Album Social Community - %site_name%', $this->sUsername);
             $this->view->album = $oAlbum;
 
-            // Set Video Album Statistics since it needs the foreach loop and it is unnecessary to do both, we have placed in the file album.tpl
+            /**
+             * @internal FYI, we don't call `Statistic::setView()`, because it needs a foreach loop,
+             * and it is unnecessary to do both, that's why it is located in the album.tpl view instead.
+             */
         }
 
         $this->output();
@@ -185,7 +188,6 @@ class MainController extends Controller
             $this->view->video = $oVideo;
             $this->imageToSocialMetaTags($oVideo);
 
-            //Set Video Statistics
             Statistic::setView($oVideo->videoId, DbTableName::VIDEO);
         }
 

@@ -70,8 +70,8 @@ class ImportUser extends Core
 
     /**
      * @param array $aFile
-     * @param string $sDelimiter Delimiter Field delimiter (one character).
-     * @param string $sEnclosure Enclosure Field enclosure (one character).
+     * @param string $sDelimiter Field delimiter (one character).
+     * @param string $sEnclosure Field enclosure (one character).
      */
     public function __construct(array $aFile, $sDelimiter, $sEnclosure)
     {
@@ -132,7 +132,7 @@ class ImportUser extends Core
         $sFiveChars = Various::genRnd($this->aFile['name'], 5);
 
         $this->aTmpData = [
-            'email' => 'pierrehenrysoriasanz' . $sFiveChars . '@ph7cms' . $sFiveChars . '.com',
+            'email' => $this->getRandomEmail($sFiveChars),
             'username' => 'pH7CMS' . $sFiveChars,
             'password' => Various::genRnd(),
             'first_name' => 'Alex' . $sFiveChars,
@@ -159,7 +159,7 @@ class ImportUser extends Core
                 $this->aTmpData['username'] = $sKey;
             }
 
-            if ($sVal === 'name' || $sVal === 'firstname' || $sVal === 'givenname' || $sVal === 'forname') {
+            if ($sVal === 'name' || $sVal === 'firstname' || $sVal === 'givenname' || $sVal === 'forename') {
                 $this->aTmpData['first_name'] = $sKey;
             }
 
@@ -336,6 +336,16 @@ class ImportUser extends Core
     }
 
     /**
+     * @param string $sFiveChars
+     *
+     * @return string
+     */
+    private function getRandomEmail($sFiveChars)
+    {
+        return sprintf('peterzhenry%s@%s.ph7cms.com', $sFiveChars, $sFiveChars);
+    }
+
+    /**
      * Clean the text to make comparisons easier...
      *
      * @param $sValue
@@ -344,6 +354,14 @@ class ImportUser extends Core
      */
     private function cleanValue($sValue)
     {
-        return strtolower(trim(str_replace(['-', '_', ' '], '', $sValue)));
+        return strtolower(
+            trim(
+                str_replace(
+                    ['-', '_', ' '],
+                    '',
+                    $sValue
+                )
+            )
+        );
     }
 }

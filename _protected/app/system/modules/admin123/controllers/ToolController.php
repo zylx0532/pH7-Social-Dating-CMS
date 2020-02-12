@@ -2,7 +2,7 @@
 /**
  * @title          Tool Controller
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Admin / Controller
@@ -120,16 +120,10 @@ class ToolController extends Controller
         $this->view->h1_title = $this->sTitle;
 
         $aDumpList = $this->file->getFileList(PH7_PATH_BACKUP_SQL, static::BACKUP_FILE_EXTS);
-
-        // Removing the path
-        $aDumpList = array_map(function ($sValue) {
-            return str_replace(PH7_PATH_BACKUP_SQL, '', $sValue);
-        }, $aDumpList);
+        $this->removePaths($aDumpList);
         $this->view->aDumpList = $aDumpList;
 
-
         $oSecurityToken = new Token;
-
         if ($this->httpRequest->postExists('backup')) {
             if (!$oSecurityToken->check('backup')) {
                 $this->design->setFlashMsg(Form::errorTokenMsg(), Design::ERROR_TYPE);
@@ -213,7 +207,6 @@ class ToolController extends Controller
                 }
             }
         }
-
         unset($oSecurityToken);
 
 
@@ -299,5 +292,17 @@ class ToolController extends Controller
     private function isPost()
     {
         return $this->httpRequest->postExists('is');
+    }
+
+    /**
+     * @param array $aDumpList
+     *
+     * @return array
+     */
+    private function removePaths(array $aDumpList)
+    {
+        return array_map(function ($sFullPath) {
+            return str_replace(PH7_PATH_BACKUP_SQL, '', $sFullPath);
+        }, $aDumpList);
     }
 }

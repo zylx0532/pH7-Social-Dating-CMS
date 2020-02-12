@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Affiliate / Form / Processing
@@ -49,7 +49,7 @@ class EditFormProcess extends Form
         }
 
         if (AdminCore::auth()) {
-            // For security reasons, only admins are able to change profile gender
+            // For security reasons, only admins can change profile gender
             if (!$this->str->equals($this->httpRequest->post('sex'), $oAff->sex)) {
                 $oAffModel->updateProfile(
                     'sex',
@@ -63,13 +63,16 @@ class EditFormProcess extends Form
             }
         }
 
-        if (!$this->str->equals($this->dateTime->get($this->httpRequest->post('birth_date'))->date('Y-m-d'), $oAff->birthDate)) {
-            $oAffModel->updateProfile(
-                'birthDate',
-                $this->dateTime->get($this->httpRequest->post('birth_date'))->date('Y-m-d'),
-                $iProfileId,
-                DbTableName::AFFILIATE
-            );
+        if (AdminCore::auth()) {
+            // For security reasons, only admins can change date of birth
+            if (!$this->str->equals($this->dateTime->get($this->httpRequest->post('birth_date'))->date('Y-m-d'), $oAff->birthDate)) {
+                $oAffModel->updateProfile(
+                    'birthDate',
+                    $this->dateTime->get($this->httpRequest->post('birth_date'))->date('Y-m-d'),
+                    $iProfileId,
+                    DbTableName::AFFILIATE
+                );
+            }
         }
 
         $this->updateDynamicFields($iProfileId, $oAffModel);

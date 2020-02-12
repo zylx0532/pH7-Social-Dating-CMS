@@ -1,29 +1,40 @@
 # pH7 Social Dating CMS
 
-## ⚡️The KILLER Dating WebApp Builder!
+## ⚡️The 2020 <span style="text-decoration:underline">Killer Dating WebApp Builder</span>! ❤️
 
-### The 2019 Most Secure, Powerful & Professional "Social Dating Web App Builder" 🚀
+### 🚀 The Most Secure, User-Friendly & Open Source Social Dating Web App Software
+
 
 [![PayPal](https://img.shields.io/badge/Donate-PayPal-lightgrey.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X457W3L7DAPC6 "Help keep me off the streets! ;)") [![Build Status](https://scrutinizer-ci.com/g/pH7Software/pH7-Social-Dating-CMS/badges/build.png?b=master)](https://scrutinizer-ci.com/g/pH7Software/pH7-Social-Dating-CMS/build-status/master) [![GPL v3 Licence](https://img.shields.io/aur/license/yaourt.svg)](https://opensource.org/licenses/gpl-3.0.html) [![SourceForge](https://img.shields.io/badge/Download-SourceForge-orange.svg)](https://sourceforge.net/projects/ph7socialdating/files/latest/download) [![Patreon](https://img.shields.io/badge/Subscribe-Patreon-red.svg)](https://www.patreon.com/bePatron?u=3534366 "Become a Patron Today!")
 
-**pH7, Social Dating CMS Solution™** is a **Professional**, **Free** & **Open Source** Social Dating CMS, fully responsive design, low-resource-intensive, powerful and very secure.
+**pH7's Social Dating Solution™** is a **Professional**, **Open Source** All-Inclusive **Turnkey Dating Software**. Fully responsive design, low-resource-intensive, powerful and very secure.
 
-pH7CMS (now known as pH7Builder) offers 42 modules and based on its homemade framework (pH7Framework). It is also the first Professional, Free and Open Source Social Dating Site Builder Software and the first choice for creating enterprise level Dating Apps/Service or social networking sites.
+pH7CMS (currently known as **pH7Builder**) offers 42 modules and based on its homemade framework (pH7Framework).
+
+pH7Builder is the first Professional, Free and Open Source Social Dating Site Builder Software. By far, the first choice for creating enterprise-level Dating Apps/Service or social networking sites.
 
 
-*Imagine in 3 months' time, you have a well-known successful online community with thousands of happy users and without spending a dime for it! Instead, you spent money on advertising, user acquisition and other marketing strategies... Imagine the time you have saved. The amazing business and freedom you have now created.*
+**Imagine in 3 months' time, you have a well-known successful online community with thousands of happy users and without spending a dime for it! Instead, you spent money on advertising, user acquisition, and other marketing strategies... Imagine the time you have saved. The amazing business and freedom you have now created.**
 
 With **[pH7CMS](https://sourceforge.net/projects/ph7socialdating/files/latest/download)**, *THIS IS TOTALLY POSSIBLE!* (however, you have to be motivated! Nothing comes as magic).
 
 
 ![Professional PHP Social Dating Builder Software](https://cloud.githubusercontent.com/assets/1325411/19419476/5475b32c-93d0-11e6-9756-8e7db8df129f.png)
 
+### 🤗 100% Owned by You ❤
+
+**Don't let your webapp be controlled by others! 🚀**
+
+Why your business has to be under the mercy of others?
+By choosing pH7CMS, you have complete control of your website and your users!
+You get and own all data and files, hosted on your own server! ✌️
+
 
 ## 👀 Software Overview
 
-**pH7 Dating CMS** is a **Social/Dating CMS** written in **Object-Oriented** PHP (*OOP*), fully compatible and highly optimised for PHP 7+ and based on **MVC** architecture (Model-View-Controller).
+**pH7 Dating CMS** is a **Social ommunity CMS** based on a powerful modular OOP architecture, fully compatible and highly optimized for PHP 7+ and based on **MVC** architecture (Model-View-Controller).
 
-It is designed with the **KISS** principle in mind, and the whole source code can be read and understood in minutes. For a better flexibility, the software uses **PDO** (PHP Data Objects) abstraction which allows the choice of the database. The principle of development is **DRY** (Don't Repeat Yourself) aimed at reducing repetition of information of all kinds (no duplicate code) and **YAGNI** principle to avoid unused code/not needed functionality in the software.
+It is designed with the **KISS** principle in mind, and the whole source code can be read and understood in minutes. For better flexibility, the software uses **PDO** (PHP Data Objects) abstraction which allows the choice of the database. The principle of development is **DRY** (Don't Repeat Yourself) aimed at reducing repetition of information of all kinds (no duplicate code) and **YAGNI** principle to avoid unused code/not needed functionality in the software.
 
 This Free and Open Source **Social Dating Site Builder** wants to be low resource-intensive, powerful, stable and secure. The software also comes with 42 system modules and is based on **pH7Framework** *(written specifically for this project)* that has over 52 packages.
 
@@ -65,7 +76,7 @@ This Free and Open Source **Social Dating Site Builder** wants to be low resourc
 * Member Approval System
 * Advanced Admin Panel
 * Complete Membership System
-* Payment Gateways Integration for PayPal, Stripe, Braintree, Bitcoin and 2CheckOut
+* Payment Gateways Integration for PayPal, Stripe, Braintree, Bitcoin, 2CheckOut and Skeerel Pay
 * Statistics & Analytics System
 * Live Notification System
 * Registration delay (to avoid spam)
@@ -106,7 +117,7 @@ This Free and Open Source **Social Dating Site Builder** wants to be low resourc
 * Message templates
 * Multi Themes and many personalizable
 * Includes top HTML5 features
-* Allow to sign in to your site with Facebook, Google and Twitter thanks pH7CMS's Connect module
+* Allow to sign in to your site with Facebook, Google and Twitter thanks to pH7CMS's Connect module
 * Invite Friends
 * Social Bookmark (Social Media Sharing Buttons)
 * Anti-Scam and Anti-Fraud Tools
@@ -114,11 +125,11 @@ This Free and Open Source **Social Dating Site Builder** wants to be low resourc
 * Powerful Anti-Spam System (and detects duplicate contents) powered by the Invisible Intelligent Spam Detection System™
 * pCO8 SECURITY pH7Framework™ (offers one of the highest protection for your webapp)
 * Full Security system against XSS, CSRF, SQL injection, authentication hacking, session fixation, brute-force, reverse tabnabbing phishing attacks, ... and can even prevent some DDoS attacks!
-* Two-Factor Authentication (2FA). With it, your website's admins, affiliates, users won't never be hacked again or got their accounts stolen thanks a mobile device token verification.
+* Two-Factor Authentication (2FA). With it, your website's admins, affiliates, users won't never be hacked again or got their accounts stolen thanks to a verification token sent on the user's mobile device
 * Progressive Web App (PWA) support (requires HTTPS)
 * Admin Panel - Block Access with IP Restriction
 * Beautiful Code: Very thoroughly commented about what's happening throughout the PHP code, beautiful indentation and very readable, even for non-programmers
-* Anyone can easily contribute to pH7CMS project thanks the [GitHub repository](https://github.com/pH7Software/pH7-Social-Dating-CMS)
+* Anyone can easily contribute to pH7CMS project thanks to the [GitHub repository](https://github.com/pH7Software/pH7-Social-Dating-CMS)
 
 
 **It's not a hazard that pH7CMS is considered to be the first choice for creating an enterprise level dating web app or social networking website**
@@ -130,7 +141,7 @@ This Free and Open Source **Social Dating Site Builder** wants to be low resourc
 
 ## ⚙ Requirements
 
-* **Application Server** PHP 5.6 or higher (Recommended Version: **PHP 7.0.4** or higher).
+* **Application Server** PHP 5.6 or higher (recommended version: **PHP 7.0.4** or higher).
 
 * **Database** MySQL/MariaDB 5.5.3 or higher.
 
@@ -215,7 +226,7 @@ You can find and add other languages on the [I18N repo](https://github.com/pH7So
 
 [![Pierre-Henry Soria](https://avatars0.githubusercontent.com/u/1325411?s=200)](https://pierrehenry.be "My personal website :-)")
 
-Coded & Designed with lots of ❤ by [Pierre-Henry Soria](https://ph7.me). A SUPER Passionate Belgian Software Engineer 🍫🍺
+Designed & Coded with lots of ❤ by [Pierre-Henry Soria](https://ph7.me). A SUPER Passionate Belgian Software Engineer 🍫🍺
 
 
 ## 🤝 Hire Me At Your Company?
@@ -261,7 +272,7 @@ Just clone the repository, make your changes and then make a push ;-)
 
 ![Eco Friendly. Love the World and Love the Nature](static/img/love-nature.svg)
 
-[pH7CMS](https://ph7cms.com) has been built to reduce the power and CPU usage of your server in order to preserve the nature and help to save our environment.
+[pH7CMS](https://ph7cms.com) has been designed to reduce power and CPU usage of your server in order to preserve the nature and help to save our environment.
 
 pH7CMS's templates also use lighter colors since LCD monitors use less electricity to display them.
 
@@ -295,7 +306,7 @@ Finally, **please consider using green Web hosting** (which use Green Power supp
 You can send me an email for any suggestions or feedback at: *hello {AT} ph7cms {D0T} com*
 
 
-## ⚖ License
+## ⚖️ License
 
 **pH7CMS** is generously distributed under **Open Source, Free** License.
 

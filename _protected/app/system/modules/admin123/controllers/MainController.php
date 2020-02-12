@@ -2,7 +2,7 @@
 /**
  * @title          Main Controller
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Admin / Controller
@@ -11,11 +11,11 @@
 namespace PH7;
 
 use PH7\Framework\Core\Kernel;
+use PH7\Framework\Date\Various as VDate;
 use PH7\Framework\Layout\Html\Meta;
 use PH7\Framework\Mvc\Model\DbConfig;
 use PH7\Framework\Mvc\Router\Uri;
 use PH7\Framework\Security\Version;
-use PH7\Framework\Date\Various as VDate;
 use PH7\Framework\Url\Header;
 
 class MainController extends Controller

@@ -9,7 +9,8 @@
 namespace PH7;
 
 use PH7\Framework\CArray\CArray;
-use PH7\Framework\Geo\Map\Map;
+use PH7\Framework\Error\CException\PH7InvalidArgumentException;
+use PH7\Framework\Geo\Map\Map as GeoMap;
 use PH7\Framework\Http\Http;
 use PH7\Framework\Mvc\Model\DbConfig;
 use PH7\Framework\Navigation\Page;
@@ -21,10 +22,7 @@ class CountryController extends Controller
     const MAP_WIDTH_SIZE = '100%';
     const MAP_HEIGHT_SIZE = '520px';
 
-    const COUNTRY_CODE_LENGTH = 2;
     const MAX_PROFILE_PER_PAGE = 20;
-    const MAX_COUNTRY_LENGTH = 50;
-    const MAX_CITY_LENGTH = 50;
 
     /**
      * @param string|null $sCountry
@@ -79,11 +77,11 @@ class CountryController extends Controller
     {
         $sCountryCode = CArray::getKeyByValueIgnoreCase($this->registry->country, $this->registry->lang);
 
-        if (strlen($sCountryCode) !== self::COUNTRY_CODE_LENGTH) {
+        if (Map::isCountryCodeTooLong($sCountryCode)) {
             return substr(
                 $this->registry->country,
                 0,
-                self::COUNTRY_CODE_LENGTH
+                Map::COUNTRY_CODE_LENGTH
             );
         }
 
@@ -115,18 +113,23 @@ class CountryController extends Controller
     private function setMap()
     {
         $sFullAddress = $this->registry->country . ' ' . $this->registry->city;
-        $sMarkerText = t('Meet new people here thanks <b>%site_name%</b>!');
+        $sMarkerText = t('Meet new people here thanks to <b>%site_name%</b>!');
 
-        $oMap = new Map;
-        $oMap->setKey(DbConfig::getSetting('googleApiKey'));
-        $oMap->setCenter($sFullAddress);
-        $oMap->setSize(self::MAP_WIDTH_SIZE, self::MAP_HEIGHT_SIZE);
-        $oMap->setDivId('country_map');
-        $oMap->setZoom(self::MAP_ZOOM_LEVEL);
-        $oMap->addMarkerByAddress($sFullAddress, $sMarkerText, $sMarkerText);
-        $oMap->generate();
-        $this->view->map = $oMap->getMap();
-        unset($oMap);
+        try {
+            $oMapDrawer = new MapDrawerCore(
+                new GeoMap,
+                DbConfig::getSetting('googleApiKey')
+            );
+            $oMapDrawer->setWidthSize(self::MAP_WIDTH_SIZE);
+            $oMapDrawer->setHeightSize(self::MAP_HEIGHT_SIZE);
+            $oMapDrawer->setZoomLevel(self::MAP_ZOOM_LEVEL);
+            $oMapDrawer->setDivId('country_map');
+            $sContent = $oMapDrawer->getMap($sFullAddress, $sMarkerText);
+        } catch (PH7InvalidArgumentException $oE) {
+            $sContent = sprintf('<strong>%s</strong>', $oE->getMessage());
+        }
+
+        $this->view->map = $sContent;
     }
 
     /**
@@ -141,7 +144,7 @@ class CountryController extends Controller
         return str_replace(
             '-',
             ' ',
-            substr($this->str->upperFirst($sCountry), 0, self::MAX_COUNTRY_LENGTH)
+            substr($this->str->upperFirst($sCountry), 0, Map::MAX_COUNTRY_LENGTH)
         );
     }
 
@@ -157,7 +160,7 @@ class CountryController extends Controller
         return str_replace(
             '-',
             ' ',
-            substr($this->str->upperFirst($sCity), 0, self::MAX_CITY_LENGTH)
+            substr($this->str->upperFirst($sCity), 0, Map::MAX_CITY_LENGTH)
         );
     }
 

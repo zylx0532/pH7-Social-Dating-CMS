@@ -77,7 +77,7 @@ class MainController extends ProfileBaseController
             $this->view->middle_name = $aData['middle_name'];
             $this->view->sex = $oUser->sex;
             $this->view->match_sex = $oUser->matchSex;
-            $this->view->match_sex_search = str_replace(['[code]', ','], '&sex[]=', '[code]' . $oUser->matchSex);
+            $this->view->match_sex_search = str_replace(['[code]', ','], '&amp;sex[]=', '[code]' . $oUser->matchSex);
             $this->view->age = $aData['age'];
             $this->view->country = t($aData['country']);
             $this->view->country_code = $aData['country'];
@@ -91,7 +91,7 @@ class MainController extends ProfileBaseController
             $this->view->is_logged = $this->bUserAuth;
             $this->view->is_own_profile = $this->isOwnProfile();
 
-            // Count number of views
+            // Count number of times the profile is viewed
             Statistic::setView($this->iProfileId, DbTableName::MEMBER);
         } else {
             $this->displayPageNotFound();

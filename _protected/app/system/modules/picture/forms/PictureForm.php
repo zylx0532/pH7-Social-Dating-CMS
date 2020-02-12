@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Picture / Form
@@ -40,14 +40,52 @@ class PictureForm
         $oForm->addElement(new \PFBC\Element\Hidden('submit_picture', 'form_picture'));
         $oForm->addElement(new \PFBC\Element\Token('picture'));
 
-        $oForm->addElement(new \PFBC\Element\Select(t('Choose your album - OR - <a href="%0%">Add a new Album</a>', Uri::get('picture', 'main', 'addalbum')), 'album_id', $aAlbumName, ['value' => self::getAlbumId(), 'required' => 1]));
+        $oForm->addElement(
+            new \PFBC\Element\Select(
+                t('Choose your album - OR - <a href="%0%">Add a new Album</a>', Uri::get('picture', 'main', 'addalbum')),
+                'album_id',
+                $aAlbumName,
+                [
+                    'value' => self::getAlbumId(),
+                    'required' => 1
+                ]
+            )
+        );
         unset($aAlbumName);
 
         $oForm->addElement(new \PFBC\Element\Hidden('album_title', @$oAlbums[0]->name));
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Name for your photo(s):'), 'title', ['pattern' => $sTitlePattern, 'validation' => new \PFBC\Validation\RegExp($sTitlePattern)]));
-        $oForm->addElement(new \PFBC\Element\File(t('Your photo(s):'), 'photos[]', ['description' => '<span class="bold">' . t('Tip:') . '</span> ' . t('You can select multiple photos at once by clicking multiple files while holding down the "CTRL" key.'), 'multiple' => 'multiple', 'accept' => 'image/*', 'required' => 1]));
+        $oForm->addElement(
+            new \PFBC\Element\Textbox(
+                t('Name for your photo(s):'),
+                'title',
+                [
+                    'pattern' => $sTitlePattern,
+                    'validation' => new \PFBC\Validation\RegExp($sTitlePattern)
+                ]
+            )
+        );
+        $oForm->addElement(
+            new \PFBC\Element\File(
+                t('Your photo(s):'),
+                'photos[]',
+                [
+                    'description' => '<span class="bold">' . t('Tip:') . '</span> ' . t('You can select multiple photos at once by clicking multiple files while holding down the "CTRL" key.'),
+                    'multiple' => 'multiple',
+                    'accept' => 'image/*',
+                    'required' => 1
+                ]
+            )
+        );
         $oForm->addElement(new \PFBC\Element\HTMLExternal('<p class="pfbc-label"><em><span class="bold">' . t('Note:') . '</span> ' . t('Please be patient while downloading pictures, this may take time (especially if you download a lot of photos at once).') . '</em></p>'));
-        $oForm->addElement(new \PFBC\Element\Textarea(t('Description for your photo(s):'), 'description', ['validation' => new \PFBC\Validation\Str(2, 190)]));
+        $oForm->addElement(
+            new \PFBC\Element\Textarea(
+                t('Description for your photo(s):'),
+                'description',
+                [
+                    'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH)
+                ]
+            )
+        );
         $oForm->addElement(new \PFBC\Element\Button(t('Upload'), 'submit', ['icon' => 'image']));
         $oForm->render();
     }

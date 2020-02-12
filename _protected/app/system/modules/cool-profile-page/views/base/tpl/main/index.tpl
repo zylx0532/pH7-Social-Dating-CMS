@@ -8,7 +8,7 @@
         {{ (new AvatarDesignCore)->lightBox($username, $first_name, $sex, 400) }}
         <h3 itemprop="name"><span itemprop="name">{first_name}</span> {middle_name} <span itemprop="familyName">{last_name}</span>
             {if empty($last_name) OR empty($middle_name)}
-                {* show username if middle or last name isn't set *}
+                {* Display the username if middle or last name is empty *}
                 <span itemprop="additionalName" class="italic">({username})</span>
             {/if}
             {{ $design->report($id, $username, $first_name, $sex) }}
@@ -216,7 +216,7 @@
             {{ $design->like($username, $first_name, $sex) }}
         </p>
 
-        {manual_include 'interested_buttons.inc.tpl'}
+        {manual_include 'interested_or_not.buttons.inc.tpl'}
     </div>
 
     <div class="col-xs-12 col-sm-2 col-md-3">

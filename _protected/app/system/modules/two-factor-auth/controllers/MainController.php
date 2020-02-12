@@ -16,7 +16,12 @@ use RobThree\Auth\TwoFactorAuth as Authenticator;
 
 class MainController extends Controller
 {
+    const AUTHENTICATOR_IOS_APP_URL = 'https://itunes.apple.com/en/app/google-authenticator/id388497605';
+    const AUTHENTICATOR_ANDROID_APP_URL = 'https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2';
+
     const TWO_FACTOR_SECRET_STRING_LENGTH = 10;
+    const WRONG_MODULE_ERROR_MESSAGE = 'Wrong "%s" module!';
+    const BACKUP_CODE_FILE_EXT = '.txt';
 
     /** @var TwoFactorAuthModel */
     private $o2FactorModel;
@@ -81,6 +86,8 @@ class MainController extends Controller
             exit;
         }
 
+        $this->view->authenticator_ios_app_url = self::AUTHENTICATOR_IOS_APP_URL;
+        $this->view->authenticator_android_app_url = self::AUTHENTICATOR_ANDROID_APP_URL;
         $this->view->qr_core = $this->oAuthenticator->getQRCodeImageAsDataUri($this->getAuthenticatorName(), $sSecret, 240);
 
         $this->output();
@@ -93,18 +100,31 @@ class MainController extends Controller
      *
      * @return void
      */
-    protected function download($sSecret)
+    private function download($sSecret)
     {
-        $sFileName = '2FA-backup-code-' . $this->sMod . '-' . Url::clean($this->registry->site_name) . '.txt';
+        $sFileName = '2FA-backup-code-' . $this->sMod . '-' . Url::clean($this->registry->site_name) . self::BACKUP_CODE_FILE_EXT;
         header('Content-Disposition: attachment; filename=' . $sFileName);
+        $sBackupCodeTextMessage = $this->getBackupCodeMessage($sSecret);
 
-        echo t('BACKUP VERIFICATION CODE - %site_url% | %0% area.', $this->sMod) . "\r\n\r\n";
-        echo t('Code: %0%', $this->oAuthenticator->getCode($sSecret)) . "\r\n\r\n";
-        echo t('Date: %0%', $this->dateTime->get()->dateTime()) . "\r\n\r\n";
-        echo t('Print it and keep it in a safe place, like your wallet.') . "\r\n\r\n\r\n";
-        echo t('Regards, %site_name%') . "\r\n";
-        echo '-----' . "\r\n";
-        echo t('Powered by "pH7CMS.com" software.') . "\r\n";
+        echo $sBackupCodeTextMessage;
+    }
+
+    /**
+     * @param string $sSecret The 2FA secret code.
+     *
+     * @return string
+     */
+    private function getBackupCodeMessage($sSecret)
+    {
+        $sTxtMsg = t('BACKUP VERIFICATION CODE - %site_url% | %0%', $this->sMod) . "\r\n\r\n";
+        $sTxtMsg .= t('Code: %0%', $this->oAuthenticator->getCode($sSecret)) . "\r\n\r\n";
+        $sTxtMsg .= t('Generated on: %0%', $this->dateTime->get()->date()) . "\r\n\r\n";
+        $sTxtMsg .= t('Print it and keep it in a safe place, like your wallet.') . "\r\n\r\n\r\n";
+        $sTxtMsg .= t('Regards, %site_name%') . "\r\n";
+        $sTxtMsg .= '-----' . "\r\n";
+        $sTxtMsg .= t('Powered by "pH7CMS.com" software.') . "\r\n";
+
+        return $sTxtMsg;
     }
 
     /**
@@ -114,7 +134,7 @@ class MainController extends Controller
      *
      * @throws PH7InvalidArgumentException Explanatory message if the specified module is wrong.
      */
-    protected function getProfileId()
+    private function getProfileId()
     {
         switch ($this->sMod) {
             case 'user':
@@ -125,7 +145,9 @@ class MainController extends Controller
                 return $this->session->get('admin_id');
 
             default:
-                throw new PH7InvalidArgumentException('Wrong "' . $this->sMod . '" module!');
+                throw new PH7InvalidArgumentException(
+                    sprintf(self::WRONG_MODULE_ERROR_MESSAGE, $this->sMod)
+                );
         }
     }
 
@@ -134,9 +156,9 @@ class MainController extends Controller
      *
      * @return void
      */
-    protected function update2FaStatus()
+    private function update2FaStatus()
     {
-        $this->iIsEnabled = $this->iIsEnabled === 1 ? 0 : 1; // Get the opposite value (if 1 so 0 | if 0 so 1)
+        $this->iIsEnabled = ($this->iIsEnabled === 1) ? 0 : 1; // Get the opposite value (if 1 so 0 | if 0 so 1)
 
         $this->o2FactorModel->setStatus($this->iIsEnabled, $this->iProfileId);
     }
@@ -153,7 +175,7 @@ class MainController extends Controller
     }
 
     /**
-     * @param string $sSecret
+     * @param string $sSecret The 2FA secret code.
      *
      * @return bool
      */

@@ -2,7 +2,7 @@
 /**
  * Method for managing the banishment of pH7CMS.
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Security / Ban
@@ -18,7 +18,8 @@ use PH7\Framework\Pattern\Statik;
 
 class Ban
 {
-    const DIR = 'bans/';
+    const DIR = 'banned/';
+    const EXT = '.txt';
     const USERNAME_FILE = 'username.txt';
     const EMAIL_FILE = 'email.txt';
     const WORD_FILE = 'word.txt';
@@ -101,6 +102,7 @@ class Ban
      * Filter words.
      *
      * @param string $sVal
+     * @param bool $bWordReplace
      *
      * @return string
      */
@@ -119,6 +121,8 @@ class Ban
      */
     private static function is()
     {
+        self::setCaseInsensitive();
+
         if (self::$bIsEmail) {
             if (self::check(strrchr(self::$sVal, '@'))) {
                 return true;
@@ -163,5 +167,10 @@ class Ban
         $aBans = file(PH7_PATH_APP_CONFIG . static::DIR . self::$sFile);
 
         return in_array($sVal, array_map('trim', $aBans), true);
+    }
+
+    private static function setCaseInsensitive()
+    {
+        self::$sVal = strtolower(self::$sVal);
     }
 }

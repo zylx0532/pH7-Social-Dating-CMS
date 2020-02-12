@@ -2,7 +2,7 @@
 /**
  * @title            Optimization Class
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Layout
@@ -17,6 +17,8 @@ use PH7\Framework\File\File;
 
 class Optimization
 {
+    const REGEX_CSS_IMPORT_URL_PATTERN = '/(url\([\'"]??)([^\'"\)]+?\.[^\'"\)]+?)([\'"]??\))/msi';
+
     /**
      * Data URI scheme - base64 encoding.
      *
@@ -48,24 +50,22 @@ class Optimization
     public static function cssDataUriCleanup($sFile, $sDir)
     {
         // Scan any left file references & adjust their paths
-        $sRegexUrl = '/(url\([\'"]??)([^\'"\)]+?\.[^\'"\)]+?)([\'"]??\))/msi';
-
-        preg_match_all($sRegexUrl, $sFile, $aHit, PREG_PATTERN_ORDER);
+        preg_match_all(self::REGEX_CSS_IMPORT_URL_PATTERN, $sFile, $aHit, PREG_PATTERN_ORDER);
 
         for ($i = 0, $iCountHit = count($aHit[0]); $i < $iCountHit; $i++) {
-            $sSearch = $aHit[1][$i] . $aHit[2][$i] . $aHit[3][$i];
-
-            $sReplace = $sDir . $aHit[1][$i];
-            $sReplace .= $aHit[2][$i] . $aHit[3][$i];
-
+            $sProtocolContext = str_replace(['"', "'"], '', $aHit[2][$i]);
             if (
-                substr(str_replace(['"', "'"], '', $aHit[2][$i]), 0, 5) !== 'http:' &&
-                substr(str_replace(['"', "'"], '', $aHit[2][$i]), 0, 6) !== 'https:' &&
-                substr(str_replace(['"', "'"], '', $aHit[2][$i]), 0, 5) !== 'data:' &&
-                substr(str_replace(['"', "'"], '', $aHit[2][$i]), 0, 6) !== 'mhtml:' &&
-                substr(str_replace(['"', "'"], '', $aHit[2][$i]), 0, 1) !== '/' &&
-                substr(str_replace(['"', "'"], '', $aHit[2][$i]), strlen(str_replace(['"', "'"], '', $aHit[2][$i])) - 4, 4) !== '.htc'
+                substr($sProtocolContext, 0, 5) !== 'http:' &&
+                substr($sProtocolContext, 0, 6) !== 'https:' &&
+                substr($sProtocolContext, 0, 5) !== 'data:' &&
+                substr($sProtocolContext, 0, 6) !== 'mhtml:' &&
+                substr($sProtocolContext, 0, 1) !== '/' &&
+                substr($sProtocolContext, strlen($sProtocolContext) - 4, 4) !== '.htc'
             ) {
+                $sSearch = $aHit[1][$i] . $aHit[2][$i] . $aHit[3][$i];
+                $sReplace = $sDir . $aHit[1][$i];
+                $sReplace .= $aHit[2][$i] . $aHit[3][$i];
+
                 $sFile = str_replace($sSearch, $sReplace, $sFile);
             }
         }

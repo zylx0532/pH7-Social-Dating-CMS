@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Admin / From
@@ -40,7 +40,17 @@ class ProtectedFileForm
             $oForm->configure(['action' => '']);
             $oForm->addElement(new \PFBC\Element\Hidden('submit_file', 'form_file'));
             $oForm->addElement(new \PFBC\Element\Token('file'));
-            $oForm->addElement(new \PFBC\Element\Textarea(t('File Contents'), 'content', ['value' => $rData, 'style' => 'height:50rem', 'required' => 1]));
+            $oForm->addElement(
+                new \PFBC\Element\Textarea(
+                    t('File Contents'),
+                    'content',
+                    [
+                        'value' => $rData,
+                        'style' => 'height:50rem',
+                        'required' => 1
+                    ]
+                )
+            );
             if (self::isLegalPage($sFullPath)) {
                 $oForm->addElement(
                     new \PFBC\Element\HTMLExternal(
@@ -54,7 +64,7 @@ class ProtectedFileForm
             $oForm->addElement(new \PFBC\Element\Button(t('Save')));
             $oForm->render();
         } catch (RuntimeException $oExcept) {
-            echo '<p class="col-md-6 col-md-offset-4 red">' . $oExcept->getMessage() . '</p>';
+            self::showErrorMessage($oExcept);
         }
     }
 
@@ -65,7 +75,7 @@ class ProtectedFileForm
      */
     private static function isLegalPage($sFullPath)
     {
-        $cIsFound = function ($sPageFilename) use ($sFullPath) {
+        $cIsFound = static function ($sPageFilename) use ($sFullPath) {
             return strpos($sFullPath, $sPageFilename) !== false;
         };
 
@@ -90,5 +100,10 @@ class ProtectedFileForm
         }
 
         return $mRealFullPath;
+    }
+
+    private static function showErrorMessage(RuntimeException $oExcept)
+    {
+        printf('<p class="col-md-6 col-md-offset-4 red">%s</p>', $oExcept->getMessage());
     }
 }

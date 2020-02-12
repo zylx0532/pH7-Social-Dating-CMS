@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / User / Form / Processing
@@ -36,7 +36,12 @@ class DesignFormProcess extends Form implements NudityDetectable
             $this->checkNudityFilter();
         }
 
-        $bWallpaper = (new UserCore)->setBackground($iProfileId, $sUsername, $_FILES['wallpaper']['tmp_name'], $this->iApproved);
+        $bWallpaper = (new UserCore)->setBackground(
+            $iProfileId,
+            $sUsername,
+            $_FILES['wallpaper']['tmp_name'],
+            $this->iApproved
+        );
 
         if (!$bWallpaper) {
             \PFBC\Form::setError('form_design', Form::wrongImgFileTypeMsg());

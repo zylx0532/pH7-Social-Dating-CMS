@@ -43,7 +43,7 @@ abstract class Controller implements Controllable
      * 5.* was "pCO", 6.* was "WoW", 7.*, 8.* were "NaOH", 10.* was "pKa", 12.* was "PHS", 14.* was "pKb" amd 15.* is ABSOLUTE™
      */
     const SOFTWARE_VERSION_NAME = 'ABSOLUTE™';
-    const SOFTWARE_VERSION = '15.1.6';
+    const SOFTWARE_VERSION = '15.3.0';
     const SOFTWARE_BUILD = '1';
 
     const DEFAULT_LANG = 'en';
@@ -95,7 +95,7 @@ abstract class Controller implements Controllable
     }
 
     /**
-     * Check if the session is already initialized (thanks "session_status()" PHP >= 5.4)
+     * Check if the session is already initialized (thanks to "session_status()" PHP >= 5.4)
      * And initialize it if it isn't the case.
      *
      * @return void

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Admin / From
@@ -35,7 +35,7 @@ class EditForm
         $oForm->addElement(new \PFBC\Element\Hidden('submit_admin_edit_account', 'form_admin_edit_account'));
         $oForm->addElement(new \PFBC\Element\Token('edit_account'));
 
-        if (self::isNotRootAdmin($oHttpRequest)) {
+        if (self::isEditModeEligible($oHttpRequest)) {
             $oForm->addElement(
                 new \PFBC\Element\HTMLExternal('<p class="center"><a class="bold btn btn-default btn-md" href="' . Uri::get(PH7_ADMIN_MOD, 'admin', 'browse') . '">' . t('Back to Browse Admins') . '</a></p>')
             );
@@ -71,7 +71,7 @@ class EditForm
      */
     private static function getProfileId(HttpRequest $oHttpRequest)
     {
-        if (self::isNotRootAdmin($oHttpRequest)) { // Prohibit other admins to edit Root Admin (ID 1)
+        if (self::isEditModeEligible($oHttpRequest)) { // Prohibits other admins to edit Root Admin (ID 1)
             return $oHttpRequest->get('profile_id', 'int');
         }
 
@@ -83,7 +83,7 @@ class EditForm
      *
      * @return bool
      */
-    private static function isNotRootAdmin(HttpRequest $oHttpRequest)
+    private static function isEditModeEligible(HttpRequest $oHttpRequest)
     {
         return $oHttpRequest->getExists('profile_id') &&
             !AdminCore::isRootProfileId($oHttpRequest->get('profile_id', 'int'));

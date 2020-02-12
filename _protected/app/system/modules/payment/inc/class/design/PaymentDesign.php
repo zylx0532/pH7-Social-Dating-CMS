@@ -2,7 +2,7 @@
 /**
  * @title          Payment Design
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Payment / Inc / Class / Design
@@ -13,6 +13,7 @@ namespace PH7;
 use Braintree_ClientToken;
 use PH7\Framework\Mvc\Router\Uri;
 use PH7\Framework\Payment\Gateway\Api\Api as PaymentApi;
+use Skeerel\Skeerel;
 use stdClass;
 
 class PaymentDesign extends Framework\Core\Core
@@ -68,14 +69,13 @@ class PaymentDesign extends Framework\Core\Core
         '<form action="', $oStripe->getUrl(), '" method="post">',
             $oStripe->generate(),
             '<script
-                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                src="', Stripe::JS_LIBRARY_URL, '" class="stripe-button"
                 data-key="', $this->config->values['module.setting']['stripe.publishable_key'], '"
                 data-name="', $this->registry->site_name, '"
                 data-description="', $oMembership->name, '"
                 data-amount="', Stripe::getAmount($oMembership->price), '"
                 data-currency="', $this->config->values['module.setting']['currency_code'], '"
-                data-allow-remember-me="true"
-                data-bitcoin="true">
+                data-allow-remember-me="true">
             </script>
         </form>';
 
@@ -98,7 +98,7 @@ class PaymentDesign extends Framework\Core\Core
         Braintree::init($this->config);
         $sClientToken = Braintree_ClientToken::generate();
 
-        echo '<script src="https://js.braintreegateway.com/v2/braintree.js"></script>';
+        echo '<script src="', Braintree::JS_LIBRARY_URL, '"></script>';
 
         $oBraintree = new Braintree;
         $oBraintree
@@ -143,6 +143,36 @@ class PaymentDesign extends Framework\Core\Core
         $this->displayGatewayForm($o2CO, $oMembership->name, '2CO');
 
         unset($o2CO);
+    }
+
+    /**
+     * @param stdClass $oMembership
+     *
+     * @return void
+     */
+    public function buttonSkeerel(stdClass $oMembership)
+    {
+        Skeerel::generateSessionStateParameter(Skeerel::DEFAULT_COOKIE_NAME);
+
+        $sWebsiteId = $this->config->values['module.setting']['skeerel.website_id'];
+        $sSessionState = \Skeerel\Util\Session::get(Skeerel::DEFAULT_COOKIE_NAME);
+        $sJsLibrary = Skeerel::JS_LIBRARY_URL;
+        $bSandboxMode = (bool)$this->config->values['module.setting']['sandbox.enabled'];
+        $sPrice = $oMembership->price; // Decimal price format (e.g., 19.95)
+        $sCurrencyCode = $this->config->values['module.setting']['currency_code'];
+        $sRedirectUrl = Uri::get('payment', 'main', 'process', 'skeerel');
+
+        echo <<<HTML
+<script src="$sJsLibrary"
+        id="skeerel-api-script"
+        data-website-id="$sWebsiteId"
+        data-state="$sSessionState"
+        data-redirect-url="$sRedirectUrl"
+        data-payment-test="$bSandboxMode"
+        data-amount="$sPrice"
+        data-currency="$sCurrencyCode">
+</script>
+HTML;
     }
 
     /**

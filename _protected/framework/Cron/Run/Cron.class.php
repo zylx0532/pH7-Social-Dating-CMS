@@ -3,7 +3,7 @@
  * @title            Cron Class
  * @desc             Generic class for the Periodic Cron.
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Cron / Run
@@ -44,7 +44,7 @@ abstract class Cron extends Core
 
         $this->iTime = time();
         $this->oUri = Uri::getInstance();
-        $this->sDelayPathFile = PH7_PATH_SYS . 'core/assets/cron/_delay/' . $this->getFileName() . self::DELAY_FILE_EXT;
+        $this->sDelayPathFile = $this->getDelayedFilePath();
     }
 
     /**
@@ -52,7 +52,7 @@ abstract class Cron extends Core
      */
     public function checkDelay()
     {
-        $bStatus = true; // Default status is TRUE
+        $bStatus = true; // Default delay status is TRUE
 
         if ($iSavedTime = $this->getSavedDelay()) {
             $iHours = $this->getCronDelay();
@@ -72,7 +72,7 @@ abstract class Cron extends Core
     }
 
     /**
-     * @return bool|string The file contents if exists, FALSE otherwise.
+     * @return bool|string The file contents if it exists, FALSE otherwise.
      */
     private function getSavedDelay()
     {
@@ -84,11 +84,19 @@ abstract class Cron extends Core
     }
 
     /**
-     * @return string File name.
+     * @return string The current cron filename.
      */
     private function getFileName()
     {
         return strtolower($this->oUri->fragment(self::URI_FILENAME_INDEX));
+    }
+
+    /**
+     * @return string The full path of the delayed text file containing the UNIX time of the last cron job execution.
+     */
+    private function getDelayedFilePath()
+    {
+        return PH7_PATH_SYS . 'core/assets/cron/_delay/' . $this->getFileName() . self::DELAY_FILE_EXT;
     }
 
     /**

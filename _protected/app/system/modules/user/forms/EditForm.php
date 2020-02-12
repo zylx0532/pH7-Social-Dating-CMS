@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / User / Form
@@ -63,12 +63,12 @@ class EditForm
         $oForm->addElement(new \PFBC\Element\Textbox(t('Last Name:'), 'last_name', ['id' => 'name_last', 'onblur' => 'CValid(this.value,this.id)', 'value' => $oUser->lastName, 'validation' => new \PFBC\Validation\Name]));
         $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error name_last"></span>'));
 
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Nickname:'), 'username', ['description' => t('For security reasons, you cannot change your username.'), 'disabled' => 'disabled', 'value' => $oUser->username]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Nickname:'), 'username', ['description' => t('For security reasons, you cannot change your nickname.'), 'disabled' => 'disabled', 'value' => $oUser->username]));
 
-        $oForm->addElement(new \PFBC\Element\Email(t('Email:'), 'mail', ['description' => t('For security reasons and to avoid spam, you cannot change your email address.'), 'disabled' => 'disabled', 'value' => $oUser->email]));
+        $oForm->addElement(new \PFBC\Element\Email(t('Email:'), 'mail', ['description' => t('For security reasons and to avoid spam, you cannot change your email address. If it has changed, you will need to <a href="%0%">delete</a> your account and create a new one.', Uri::get('user', 'setting', 'delete')), 'disabled' => 'disabled', 'value' => $oUser->email]));
 
         if (self::isAdminLoggedAndUserIdExists($oHttpRequest)) {
-            // For security reasons, only admins are able to change profile gender
+            // For security reasons, only admins can change profile gender
             $oForm->addElement(
                 new \PFBC\Element\Radio(
                     t('Gender:'),
@@ -99,8 +99,23 @@ class EditForm
             )
         );
 
-        $oForm->addElement(new \PFBC\Element\Date(t('Date of birth:'), 'birth_date', ['id' => 'birth_date', 'onblur' => 'CValid(this.value, this.id)', 'value' => $sBirthDate, 'validation' => new \PFBC\Validation\BirthDate, 'required' => 1]));
-        $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error birth_date"></span>'));
+        if (self::isAdminLoggedAndUserIdExists($oHttpRequest)) {
+            // For security reasons, only admins can change the date of birth
+            $oForm->addElement(
+                new \PFBC\Element\Date(
+                    t('Date of birth:'),
+                    'birth_date',
+                    [
+                        'id' => 'birth_date',
+                        'onblur' => 'CValid(this.value, this.id)',
+                        'value' => $sBirthDate,
+                        'validation' => new \PFBC\Validation\BirthDate,
+                        'required' => 1
+                    ]
+                )
+            );
+            $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error birth_date"></span>'));
+        }
 
         // Generate dynamic fields
         $oFields = $oUserModel->getInfoFields($iProfileId);
@@ -134,6 +149,7 @@ class EditForm
      */
     private static function isAdminLoggedAndUserIdExists(HttpRequest $oHttpRequest)
     {
-        return AdminCore::auth() && !User::auth() && $oHttpRequest->getExists('profile_id');
+        return AdminCore::auth() && !User::auth() &&
+            $oHttpRequest->getExists('profile_id');
     }
 }

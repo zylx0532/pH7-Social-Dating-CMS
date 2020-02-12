@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Mail / Config
@@ -35,7 +35,7 @@ class Permission extends PermissionCore
         }
 
         if (!$bAdminAuth && $this->registry->controller === 'AdminController') {
-            // For security reasons, we do not redirectionnons the user to hide the url of the administrative part.
+            // For security reasons, to hide the admin URL, we don't redirect user to the admin panel
             Header::redirect(
                 Uri::get('user', 'main', 'login'),
                 $this->adminSignInMsg(),

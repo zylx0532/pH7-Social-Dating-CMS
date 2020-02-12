@@ -3,7 +3,7 @@
  * @title            Cache Class
  * @desc             Handler Cache.
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2011-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Cache
@@ -218,7 +218,7 @@ File ID: ' . $this->sId . '
  *     ' . Kernel::SOFTWARE_NAME . ' ' . Kernel::SOFTWARE_COMPANY . '
  *               --------------------
  * @since      Mon Oct 14 2011
- * @author     SORIA Pierre-Henry
+ * @author     Pierre-Henry Soria
  * @email      ' . Kernel::SOFTWARE_EMAIL . '
  * @link       ' . Kernel::SOFTWARE_WEBSITE . '
  * @copyright  ' . sprintf(Kernel::SOFTWARE_COPYRIGHT, date('Y')) . '

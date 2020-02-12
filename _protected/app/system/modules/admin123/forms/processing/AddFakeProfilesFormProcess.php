@@ -3,7 +3,7 @@
  * @title          Add Fake Profiles; Process Class
  * @desc           Generate Fake Profiles from Web API.
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2014-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Admin / From / Processing
@@ -24,14 +24,19 @@ use PH7\Framework\Url\Url;
 
 class AddFakeProfilesFormProcess extends Form
 {
+    const SERVICE_NAME = 'RandomUser';
+    const SERVICE_URL = 'https://randomuser.me';
     const API_URL = 'https://randomuser.me/api/';
-    const API_VER = '1.2';
+    const API_VER = '1.3';
 
     /** @var Validate */
     private $oValidate;
 
     /** @var ExistsCoreModel */
     private $oExistsModel;
+
+    /** @var int */
+    private static $iTotalGenerated = 0;
 
     public function __construct()
     {
@@ -42,28 +47,39 @@ class AddFakeProfilesFormProcess extends Form
         $this->oExistsModel = new ExistsCoreModel;
         $this->oValidate = new Validate;
 
-        foreach ($this->getApiClient()['results'] as $aUser) {
-            $sEmail = trim($aUser['email']);
-            $sUsername = trim($aUser['login']['username']);
+        $aUserData = $this->getApiClient()['results'];
+        if (!empty($aUserData) && is_array($aUserData)) {
+            foreach ($aUserData as $aUser) {
+                $sEmail = trim($aUser['email']);
+                $sUsername = trim($aUser['login']['username']);
 
-            if ($this->isValidProfile($sEmail, $sUsername)) {
-                $aData = $this->storeUserDataIntoArray($sUsername, $sEmail, $aUser, $oUser);
-                $aData['profile_id'] = $oUserModel->add(escape($aData, true));
-                $this->addAvatar($aData, $oUser);
+                if ($this->isValidProfile($sEmail, $sUsername)) {
+                    self::$iTotalGenerated++;
+                    $aData = $this->storeUserDataIntoArray($sUsername, $sEmail, $aUser, $oUser);
+                    $aData['profile_id'] = $oUserModel->add(escape($aData, true));
+                    $this->addAvatar($aData, $oUser);
+                }
             }
+
+            if (self::$iTotalGenerated > 0) {
+                \PFBC\Form::setSuccess(
+                    'form_add_fake_profiles',
+                    nt('%n% user has successfully been added.', '%n% users have successfully been added.', self::$iTotalGenerated)
+                );
+            } else {
+                \PFBC\Form::setError(
+                    'form_add_fake_profiles',
+                    t('None of the received fake profiles were valid for the system. Please try again.')
+                );
+            }
+        } else {
+            \PFBC\Form::setError(
+                'form_add_fake_profiles',
+                t('An error occurred when requesting user data to %0%. Maybe, you could try again later.', self::API_URL)
+            );
         }
 
         unset($oUser, $oUserModel, $aData);
-
-        \PFBC\Form::setSuccess(
-            'form_add_fake_profiles',
-            nt('%n% user has successfully been added.', '%n% users have successfully been added.', $this->getUserNumber())
-        );
-    }
-
-    protected function getUserNumber()
-    {
-        return $this->httpRequest->post('num');
     }
 
     protected function getApiClient()
@@ -79,7 +95,7 @@ class AddFakeProfilesFormProcess extends Form
     private function getApiParameters()
     {
         return [
-            'results' => $this->getUserNumber(),
+            'results' => $this->httpRequest->post('num'),
             'gender' => $this->httpRequest->post('sex'),
             'nat' => $this->httpRequest->post('nat'),
             'noinfo' => 1
@@ -114,7 +130,10 @@ class AddFakeProfilesFormProcess extends Form
      */
     private function addAvatar(array $aData, UserCore $oUser)
     {
-        // Sometimes, cURL returns FALSE and doesn't work at all under Windowns server or some other specific server config, so use file_get_contents() instead as it will work.
+        /**
+         * Sometimes, cURL fails under Windows or some other specific server configs,
+         * for this reason, we use `file_get_contents()` as fallback when cURL fails.
+         */
         if (!$rFile = $this->file->getUrlContents($aData['avatar'])) {
             $rFile = $this->file->getFile($aData['avatar']);
         }

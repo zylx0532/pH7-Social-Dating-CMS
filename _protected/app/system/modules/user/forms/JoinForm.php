@@ -45,7 +45,7 @@ class JoinForm
         $oForm->addElement(new \PFBC\Element\Textbox(t('Your First Name'), 'first_name', ['placeholder' => t('First Name'), 'id' => 'name_first', 'onblur' => 'CValid(this.value,this.id)', 'required' => 1, 'validation' => new \PFBC\Validation\Name]));
         $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error name_first"></span>'));
 
-        $oForm->addElement(new \PFBC\Element\Username(t('Your Nickname'), 'username', ['placeholder' => t('Nickname'), 'description' => PH7_URL_ROOT . UserCore::PROFILE_PAGE_PREFIX . '<strong><span class="your-user-name">' . t('your-user-name') . '</span><span class="username"></span></strong>', 'id' => 'username', 'required' => 1, 'validation' => new \PFBC\Validation\Username]));
+        $oForm->addElement(new \PFBC\Element\Username(t('Your Nickname'), 'username', ['placeholder' => t('Nickname'), 'description' => PH7_URL_ROOT . UserCore::PROFILE_PAGE_PREFIX . '<strong><span class="your-username">' . t('your-nickname') . '</span><span class="username"></span></strong>', 'id' => 'username', 'required' => 1, 'validation' => new \PFBC\Validation\Username]));
 
         $oForm->addElement(new \PFBC\Element\Email(t('Your Email'), 'mail', ['placeholder' => t('Email'), 'id' => 'email', 'onblur' => 'CValid(this.value, this.id,\'guest\')', 'required' => 1, 'validation' => new CEmail(CEmail::GUEST_MODE)]));
         $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error email"></span>'));
@@ -96,9 +96,9 @@ class JoinForm
                 t('I am a'),
                 'sex',
                 [
-                    GenderTypeUserCore::FEMALE => t('Woman') . ' <i class="fa fa-venus"></i>',
-                    GenderTypeUserCore::MALE => t('Man') . ' <i class="fa fa-mars"></i>',
-                    GenderTypeUserCore::COUPLE => t('Couple') . ' <i class="fa fa-venus-mars"></i>'
+                    GenderTypeUserCore::FEMALE => '👩 ' . t('Woman'),
+                    GenderTypeUserCore::MALE => '👨 ' . t('Man'),
+                    GenderTypeUserCore::COUPLE => '💑 ' . t('Couple')
                 ],
                 ['value' => GenderTypeUserCore::FEMALE, 'required' => 1]
             )
@@ -109,9 +109,9 @@ class JoinForm
                 t('Looking for a'),
                 'match_sex',
                 [
-                    GenderTypeUserCore::MALE => t('Man') . ' <i class="fa fa-mars"></i>',
-                    GenderTypeUserCore::FEMALE => t('Woman') . ' <i class="fa fa-venus"></i>',
-                    GenderTypeUserCore::COUPLE => t('Couple') . ' <i class="fa fa-venus-mars"></i>'
+                    GenderTypeUserCore::MALE => '👨 ' . t('Man'),
+                    GenderTypeUserCore::FEMALE => '👩 ' . t('Woman'),
+                    GenderTypeUserCore::COUPLE => '💑 ' . t('Couple')
                 ],
                 ['value' => GenderTypeUserCore::MALE, 'required' => 1]
             )
@@ -209,20 +209,30 @@ class JoinForm
     private static function generateBirthDateField(\PFBC\Form $oForm)
     {
         if (DbConfig::getSetting('isUserAgeRangeField')) {
-            $iMinAge = DbConfig::getSetting('minAgeRegistration');
-            $iMaxAge = DbConfig::getSetting('maxAgeRegistration');
-            $iDefRegistrationAge = $iMinAge + 16;
-
-            $oForm->addElement(
-                new \PFBC\Element\Range(
-                    t('How Old Are You?'),
-                    'age',
-                    ['value' => $iDefRegistrationAge, 'min' => $iMinAge, 'max' => $iMaxAge, 'required' => 1]
-                )
-            );
+            self::getRangeBirthDateFieldForm($oForm);
         } else {
             $oForm->addElement(new \PFBC\Element\Date(t('Your Date of Birth'), 'birth_date', ['id' => 'birth_date', 'description' => t('Please specify your date of birth using the calendar.'), 'onblur' => 'CValid(this.value, this.id)', 'validation' => new \PFBC\Validation\BirthDate, 'required' => 1]));
             $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error birth_date"></span>'));
         }
+    }
+
+    private static function getRangeBirthDateFieldForm(\PFBC\Form $oForm)
+    {
+        $iMinAge = DbConfig::getSetting('minAgeRegistration');
+        $iMaxAge = DbConfig::getSetting('maxAgeRegistration');
+        $iDefRegistrationAge = $iMinAge + 16;
+
+        $oForm->addElement(
+            new \PFBC\Element\Range(
+                t('How Old Are You?'),
+                'age',
+                [
+                    'value' => $iDefRegistrationAge,
+                    'min' => $iMinAge,
+                    'max' => $iMaxAge,
+                    'required' => 1
+                ]
+            )
+        );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Core / Class
@@ -58,6 +58,9 @@ abstract class PermissionCore extends Framework\Core\Core
         );
     }
 
+    /**
+     * @return string
+     */
     public function signUpMsg()
     {
         return t('Please register or login to continue.');
@@ -72,6 +75,9 @@ abstract class PermissionCore extends Framework\Core\Core
         );
     }
 
+    /**
+     * @return string
+     */
     public function signInMsg()
     {
         return t('Please sign in first 😉');
@@ -86,6 +92,9 @@ abstract class PermissionCore extends Framework\Core\Core
         );
     }
 
+    /**
+     * @return string
+     */
     public function alreadyConnectedMsg()
     {
         return t('Oops! You are already connected.');
@@ -105,11 +114,17 @@ abstract class PermissionCore extends Framework\Core\Core
         );
     }
 
+    /**
+     * @return string
+     */
     public function upgradeMembershipMsg()
     {
         return t('Please upgrade your membership!');
     }
 
+    /**
+     * @return string
+     */
     public function adminSignInMsg()
     {
         return t('Please go to the admin panel and log in as administrator.');

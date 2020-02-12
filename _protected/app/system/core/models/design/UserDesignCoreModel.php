@@ -2,7 +2,7 @@
 /**
  * @title          User Design Core Model Class
  *
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Core / Model / Design
@@ -43,10 +43,10 @@ class UserDesignCoreModel extends Design
     /**
      * Get profile avatars from the geolocation.
      *
-     * @param string $sCountryCode Optional The country code (e.g., GB, RU, FR, ES, ...). Default ''
-     * @param string $sCity Optional. The city name. Default ''
-     * @param int $iOffset Optional. Default 0
-     * @param int $iLimit Optional. Default 14
+     * @param string $sCountryCode The country code (e.g., GB, RU, FR, ES, ...).
+     * @param string $sCity The city name.
+     * @param int $iOffset
+     * @param int $iLimit
      *
      * @return void HTML output.
      */
@@ -175,7 +175,12 @@ class UserDesignCoreModel extends Design
         }
 
         foreach ($oUsers as $oUser) {
-            (new AvatarDesignCore)->get($oUser->username, $oUser->firstName, $oUser->sex, self::PROFILE_AVATAR_SIZE);
+            (new AvatarDesignCore)->get(
+                $oUser->username,
+                $oUser->firstName,
+                $oUser->sex,
+                self::PROFILE_AVATAR_SIZE
+            );
         }
     }
 

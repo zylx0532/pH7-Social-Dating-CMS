@@ -35,21 +35,7 @@ class MetaMainForm
         $oForm->addElement(new \PFBC\Element\Hidden('submit_meta', 'form_meta'));
         $oForm->addElement(new \PFBC\Element\Token('admin_meta'));
 
-        // Generate the list of languages
-        $aLangs = (new File)->getDirList(PH7_PATH_APP_LANG);
-        $iTotalLangs = count($aLangs);
-        if ($iTotalLangs > 1) {
-            $oForm->addElement(new \PFBC\Element\HTMLExternal('<div class="center divShow">'));
-            $oForm->addElement(new \PFBC\Element\HTMLExternal('<h3 class="underline"><a href="#showDiv_listLang" title="' . t('Click here to show/hide the languages') . '">' . t('Change language for the Meta Tags') . '</a></h3>'));
-            $oForm->addElement(new \PFBC\Element\HTMLExternal('<ul class="hidden" id="showDiv_listLang">'));
-
-            for ($iLangIndex = 0; $iLangIndex < $iTotalLangs; $iLangIndex++) {
-                $sAbbrLang = Lang::getIsoCode($aLangs[$iLangIndex]);
-                $oForm->addElement(new \PFBC\Element\HTMLExternal('<li>' . ($iLangIndex + 1) . ') ' . '<a class="bold" href="' . Uri::get(PH7_ADMIN_MOD, 'setting', 'metamain', $aLangs[$iLangIndex], false) . '" title="' . t($sAbbrLang) . '">' . t($sAbbrLang) . ' (' . $aLangs[$iLangIndex] . ')</a></li>'));
-            }
-            $oForm->addElement(new \PFBC\Element\HTMLExternal('</ul></div>'));
-        }
-        unset($aLangs);
+        self::generateLanguageSwitchField($oForm);
 
         $oForm->addElement(new \PFBC\Element\Textbox(t('Language:'), 'lang_id', ['disabled' => 'disabled', 'value' => $oMeta->langId]));
 
@@ -57,13 +43,13 @@ class MetaMainForm
 
         $oForm->addElement(new \PFBC\Element\Textbox(t('Headline:'), 'headline', ['description' => t('Right headline mainly displaying on the visitors homepage'), 'value' => $oMeta->headline, 'validation' => new \PFBC\Validation\Str(2, 50), 'required' => 1]));
 
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Slogan:'), 'slogan', ['description' => t('Left slogan (headline) mainly displaying on the visitors homepage'), 'value' => $oMeta->slogan, 'validation' => new \PFBC\Validation\Str(2, 190), 'required' => 1]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Slogan:'), 'slogan', ['description' => t('Left slogan (headline) mainly displaying on the visitors homepage'), 'value' => $oMeta->slogan, 'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH), 'required' => 1]));
 
         $oForm->addElement(new \PFBC\Element\CKEditor(t('SEO text:'), 'promo_text', ['description' => t('Promotional text displaying on the visitors homepage.'), 'value' => $oMeta->promoText, 'required' => 1]));
 
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Description (meta tag):'), 'meta_description', ['value' => $oMeta->metaDescription, 'validation' => new \PFBC\Validation\Str(2, 190), 'required' => 1]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Description (meta tag):'), 'meta_description', ['value' => $oMeta->metaDescription, 'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH), 'required' => 1]));
 
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Keywords (meta tag):'), 'meta_keywords', ['description' => t('Separate keywords by commas.'), 'value' => $oMeta->metaKeywords, 'validation' => new \PFBC\Validation\Str(2, 190), 'required' => 1]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Keywords (meta tag):'), 'meta_keywords', ['description' => t('Separate keywords by commas.'), 'value' => $oMeta->metaKeywords, 'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH), 'required' => 1]));
 
         $oForm->addElement(new \PFBC\Element\Textbox(t('Robots (meta tag):'), 'meta_robots', ['value' => $oMeta->metaRobots, 'validation' => new \PFBC\Validation\Str(2, 50), 'required' => 1]));
 
@@ -80,5 +66,30 @@ class MetaMainForm
         $oForm->addElement(new \PFBC\Element\Button);
 
         $oForm->render();
+    }
+
+    /**
+     * Generate the list of languages that allows admins to switch to another language on the meta tags form.
+     *
+     * @param \PFBC\Form $oForm
+     *
+     * @return void
+     */
+    private static function generateLanguageSwitchField(\PFBC\Form $oForm)
+    {
+        $aLangs = (new File)->getDirList(PH7_PATH_APP_LANG);
+        $iTotalLangs = count($aLangs);
+        if ($iTotalLangs > 1) {
+            $oForm->addElement(new \PFBC\Element\HTMLExternal('<div class="center divShow">'));
+            $oForm->addElement(new \PFBC\Element\HTMLExternal('<h3 class="underline"><a href="#showDiv_listLang" title="' . t('Click here to show/hide the languages') . '">' . t('Change language for the Meta Tags') . '</a></h3>'));
+            $oForm->addElement(new \PFBC\Element\HTMLExternal('<ul class="hidden" id="showDiv_listLang">'));
+
+            for ($iLangIndex = 0; $iLangIndex < $iTotalLangs; $iLangIndex++) {
+                $sAbbrLang = Lang::getIsoCode($aLangs[$iLangIndex]);
+                $oForm->addElement(new \PFBC\Element\HTMLExternal('<li>' . ($iLangIndex + 1) . ') ' . '<a class="bold" href="' . Uri::get(PH7_ADMIN_MOD, 'setting', 'metamain', $aLangs[$iLangIndex], false) . '" title="' . t($sAbbrLang) . '">' . t($sAbbrLang) . ' (' . $aLangs[$iLangIndex] . ')</a></li>'));
+            }
+            $oForm->addElement(new \PFBC\Element\HTMLExternal('</ul></div>'));
+        }
+        unset($aLangs);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Affiliate / Form
@@ -60,7 +60,7 @@ class EditForm
         $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error phone"></span>'));
 
         if (self::isAdminLoggedAndUserIdExists($oHttpRequest)) {
-            // For security reasons, only admins are able to change profile gender
+            // For security reasons, only admins can change profile gender
             $oForm->addElement(
                 new \PFBC\Element\Radio(
                     t('Gender:'),
@@ -77,8 +77,11 @@ class EditForm
             );
         }
 
-        $oForm->addElement(new \PFBC\Element\Date(t('Your Date of Birth:'), 'birth_date', ['id' => 'birth_date', 'onblur' => 'CValid(this.value, this.id)', 'value' => $sBirthDate, 'validation' => new \PFBC\Validation\BirthDate, 'required' => 1]));
-        $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error birth_date"></span>'));
+        if (self::isAdminLoggedAndUserIdExists($oHttpRequest)) {
+            // For security reasons, only admins can change the date of birth
+            $oForm->addElement(new \PFBC\Element\Date(t('Your Date of Birth:'), 'birth_date', ['id' => 'birth_date', 'onblur' => 'CValid(this.value, this.id)', 'value' => $sBirthDate, 'validation' => new \PFBC\Validation\BirthDate, 'required' => 1]));
+            $oForm->addElement(new \PFBC\Element\HTMLExternal('<span class="input_error birth_date"></span>'));
+        }
 
         // Generate dynamic fields
         $oFields = $oAffModel->getInfoFields($iProfileId, DbTableName::AFFILIATE_INFO);

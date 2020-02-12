@@ -3,7 +3,7 @@
  * @title            File Class
  * @desc             Useful methods for handling files.
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / File
@@ -60,8 +60,8 @@ class File
         'ppt' => 'application/vnd.ms-powerpoint',
         'gif' => 'image/gif',
         'png' => 'image/png',
-        'jpeg' => 'image/jpg',
-        'jpg' => 'image/jpg',
+        'jpeg' => 'image/jpeg',
+        'jpg' => 'image/jpeg',
         'webp' => 'image/webp',
         'ico' => 'image/x-icon',
         'eot' => 'application/vnd.ms-fontobject',
@@ -89,7 +89,7 @@ class File
     }
 
     /**
-     * Get Extension file without the dot.
+     * Get the file extension, without the dot.
      *
      * @param string $sFile The File Name.
      *
@@ -97,18 +97,11 @@ class File
      */
     public function getFileExt($sFile)
     {
-        return strtolower(substr(strrchr($sFile, PH7_DOT), 1));
+        return strtolower(pathinfo($sFile, PATHINFO_EXTENSION));
     }
 
     /**
-     * Get File without Extension and dot.
-     * This function is smarter than just a code like this, substr($sFile,0,strpos($sFile,'.'))
-     * Just look at the example below for you to realize that the function removes only the extension and nothing else!
-     * Example 1 "my_file.pl" The return value is "my_file"
-     * Example 2 "my_file.inc.pl" The return value is "my_file.inc"
-     * Example 3 "my_file.class.html.php" The return value is "my_file.class.html"
-     *
-     * @see File::getFileExt() To see the method that retrieves the file extension.
+     * Give the filename without the dot and the extension (or the last one, if they are more).
      *
      * @param string $sFile
      *
@@ -116,9 +109,7 @@ class File
      */
     public function getFileWithoutExt($sFile)
     {
-        $sExt = $this->getFileExt($sFile);
-
-        return str_replace(PH7_DOT . $sExt, '', $sFile);
+        return pathinfo($sFile, PATHINFO_FILENAME);
     }
 
     /**
@@ -207,7 +198,7 @@ class File
 
         if ($rHandle = opendir($sDir)) {
             while (false !== ($sFile = readdir($rHandle))) {
-                if ($sFile != '.' && $sFile != '..' && is_dir($sDir . PH7_DS . $sFile)) {
+                if ($sFile !== '.' && $sFile !== '..' && is_dir($sDir . PH7_DS . $sFile)) {
                     $aDirList[] = $sFile;
                 }
             }
@@ -314,7 +305,6 @@ class File
             if (!is_dir($mDir)) {
                 if (!@mkdir($mDir, $iMode, true)) {
                     $sExceptMessage = 'Cannot create "%s" directory.<br /> Please verify that the directory permission is in writing mode.';
-
                     throw new PermissionException(
                         sprintf($sExceptMessage, $mDir)
                     );
@@ -581,7 +571,7 @@ class File
 
         $iSize = 0;
         while (false !== ($sFile = readdir($rHandle))) {
-            if ($sFile != '.' && $sFile != '..') {
+            if ($sFile !== '.' && $sFile !== '..') {
                 $sFullPath = $sPath . PH7_DS . $sFile;
 
                 if (is_dir($sFullPath)) {
@@ -638,7 +628,7 @@ class File
           register_shutdown_function('function_name');
          */
 
-        //if (!is_readable($sFile)) exit('File not found or inaccessible!');
+        //if (!is_readable($sFile)) throw new IOException('File not found or inaccessible!');
 
         $sName = Url::decode($sName); // Clean the name file
 
@@ -726,7 +716,7 @@ class File
         }
 
         while (false !== ($sFile = readdir($rHandle))) {
-            if ($sFile != '.' && $sFile != '..') {
+            if ($sFile !== '.' && $sFile !== '..') {
                 if (strpos($sFile, '.') === false) {
                     $this->readFiles($sPath . PH7_DS . $sFile, $mFiles);
                 } else {
@@ -754,7 +744,7 @@ class File
 
         $aRet = []; // TODO: Remove it once yield is used
         while (false !== ($sFolder = readdir($rHandle))) {
-            if ('.' == $sFolder || '..' == $sFolder || !is_dir($sPath . $sFolder)) {
+            if ($sFolder === '.' || $sFolder === '..' || !is_dir($sPath . $sFolder)) {
                 continue;
             }
 

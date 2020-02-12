@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Admin / From
@@ -13,6 +13,8 @@ use PH7\Framework\Url\Header;
 
 class AddAdminForm
 {
+    const DEFAULT_TIMEZONE = '-6';
+
     public static function display()
     {
         if (isset($_POST['submit_add_admin'])) {
@@ -43,7 +45,17 @@ class AddAdminForm
                 ['value' => GenderTypeUserCore::MALE, 'required' => 1]
             )
         );
-        $oForm->addElement(new \PFBC\Element\Timezone('Time Zone:', 'time_zone', ['description' => t('Knowing the time zone, the other administrators may know when they can contact you easily.'), 'value' => '-6', 'required' => 1]));
+        $oForm->addElement(
+            new \PFBC\Element\Timezone(
+                'Time Zone:',
+                'time_zone',
+                [
+                    'description' => t('Knowing the time zone, the other administrators may know when they can contact you easily.'),
+                    'value' => self::DEFAULT_TIMEZONE,
+                    'required' => 1
+                ]
+            )
+        );
         $oForm->addElement(new \PFBC\Element\Button);
         $oForm->render();
     }

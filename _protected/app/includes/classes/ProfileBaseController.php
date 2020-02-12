@@ -8,6 +8,7 @@
 
 namespace PH7;
 
+use PH7\Framework\Error\CException\PH7InvalidArgumentException;
 use PH7\Framework\Geo\Map\Map;
 use PH7\Framework\Layout\Html\Meta;
 use PH7\Framework\Module\Various as SysMod;
@@ -23,14 +24,16 @@ abstract class ProfileBaseController extends Controller
 {
     use ImageTaggable;
 
+    const SOCIAL_TAG_AVATAR_SIZE = 400;
+
     /**
      * Default Map settings.
      * These constants are likely to be modified in the child class
-     * thanks static:: keyword to use late static binding.
+     * thanks to static:: keyword to use late static binding.
      */
     const MAP_ZOOM_LEVEL = 10;
     const MAP_WIDTH_SIZE = '100%';
-    const MAP_HEIGHT_SIZE = '300px';
+    const MAP_HEIGHT_SIZE = '260px';
 
     /** @var UserCoreModel */
     protected $oUserModel;
@@ -161,16 +164,22 @@ abstract class ProfileBaseController extends Controller
     {
         $sFullAddress = $sCity . ' ' . t($sCountry);
         $sMarkerText = t('Meet <b>%0%</b> near here!', $oUser->username);
-        $oMap = new Map;
-        $oMap->setKey(DbConfig::getSetting('googleApiKey'));
-        $oMap->setCenter($sFullAddress);
-        $oMap->setSize(static::MAP_WIDTH_SIZE, static::MAP_HEIGHT_SIZE);
-        $oMap->setDivId('profile_map');
-        $oMap->setZoom(static::MAP_ZOOM_LEVEL);
-        $oMap->addMarkerByAddress($sFullAddress, $sMarkerText, $sMarkerText);
-        $oMap->generate();
-        $this->view->map = $oMap->getMap();
-        unset($oMap);
+
+        try {
+            $oMapDrawer = new MapDrawerCore(
+                new Map,
+                DbConfig::getSetting('googleApiKey')
+            );
+            $oMapDrawer->setWidthSize(self::MAP_WIDTH_SIZE);
+            $oMapDrawer->setHeightSize(self::MAP_HEIGHT_SIZE);
+            $oMapDrawer->setZoomLevel(self::MAP_ZOOM_LEVEL);
+            $oMapDrawer->setDivId('profile_map');
+            $sContent = $oMapDrawer->getMap($sFullAddress, $sMarkerText);
+        } catch (PH7InvalidArgumentException $oE) {
+            $sContent = sprintf('<strong>%s</strong>', $oE->getMessage());
+        }
+
+        $this->view->map = $sContent;
     }
 
     /**
@@ -347,7 +356,7 @@ abstract class ProfileBaseController extends Controller
         $sAvatarImageUrl = $this->design->getUserAvatar(
             $oUser->username,
             $oUser->sex,
-            400,
+            self::SOCIAL_TAG_AVATAR_SIZE,
             false
         );
         $this->view->image_social_meta_tag = $sAvatarImageUrl;

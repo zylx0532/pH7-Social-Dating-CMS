@@ -26,13 +26,15 @@ function get_dir_list($sDir)
 
     if ($rHandle = opendir($sDir)) {
         while (false !== ($sFile = readdir($rHandle))) {
-            if ($sFile != '.' && $sFile != '..' && is_dir($sDir . '/' . $sFile))
+            if ($sFile !== '.' && $sFile !== '..' && is_dir($sDir . '/' . $sFile)) {
                 $aDirList[] = $sFile;
+            }
         }
         closedir($rHandle);
         asort($aDirList);
         reset($aDirList);
     }
+
     return $aDirList;
 }
 
@@ -46,9 +48,12 @@ function get_dir_list($sDir)
 function is_directory($sDir)
 {
     $sPathProtected = check_ext_start(check_ext_end(trim($sDir)));
-    if (is_dir($sPathProtected))
-        if (is_readable($sPathProtected))
+
+    if (is_dir($sPathProtected)) {
+        if (is_readable($sPathProtected)) {
             return true;
+        }
+    }
     return false;
 }
 
@@ -61,7 +66,7 @@ function is_directory($sDir)
  */
 function check_ext_start($sDir)
 {
-    return (!is_windows() && substr($sDir, 0, 1) != '/') ? '/' . $sDir : $sDir;
+    return (!is_windows() && substr($sDir, 0, 1) !== '/') ? '/' . $sDir : $sDir;
 }
 
 /**
@@ -73,7 +78,7 @@ function check_ext_start($sDir)
  */
 function check_ext_end($sDir)
 {
-    return (substr($sDir, -1) != PH7_DS) ? $sDir . PH7_DS : $sDir;
+    return substr($sDir, -1) !== PH7_DS ? $sDir . PH7_DS : $sDir;
 }
 
 /**
@@ -173,9 +178,11 @@ function find($sText, $sWord)
  */
 function filled_out(array $aVars)
 {
-    foreach ($aVars as $sKey => $sVal)
-        if (empty($sKey) || trim($sVal) == '')
+    foreach ($aVars as $sKey => $sVal) {
+        if (empty($sKey) || trim($sVal) === '') {
             return false;
+        }
+    }
     return true;
 }
 
@@ -314,10 +321,11 @@ function generate_hash($iLength = 80)
  */
 function ffmpeg_path()
 {
-    if (is_windows())
-        $sPath = (is_file('C:\ffmpeg\bin\ffmpeg.exe')) ? 'C:\ffmpeg\bin\ffmpeg.exe' : 'C:\ffmpeg\ffmpeg.exe';
-    else
-        $sPath = (is_file('/usr/local/bin/ffmpeg')) ? '/usr/local/bin/ffmpeg' : '/usr/bin/ffmpeg';
+    if (is_windows()) {
+        $sPath = is_file('C:\ffmpeg\bin\ffmpeg.exe') ? 'C:\ffmpeg\bin\ffmpeg.exe' : 'C:\ffmpeg\ffmpeg.exe';
+    } else {
+        $sPath = is_file('/usr/local/bin/ffmpeg') ? '/usr/local/bin/ffmpeg' : '/usr/bin/ffmpeg';
+    }
 
     return $sPath;
 }
@@ -329,19 +337,20 @@ function ffmpeg_path()
  */
 function is_url_rewrite()
 {
-    if (!is_file(PH7_ROOT_INSTALL . '.htaccess'))
+    if (!is_file(PH7_ROOT_INSTALL . '.htaccess')) {
         return false;
+    }
 
     // Check if mod_rewrite is installed and is configured to be used via .htaccess
-    if (!$bIsRewrite = (strtolower(getenv('HTTP_MOD_REWRITE')) == 'on')) {
+    if (!$bIsRewrite = (strtolower(getenv('HTTP_MOD_REWRITE')) === 'on')) {
         $sOutputMsg = 'mod_rewrite Works!';
 
-        if (!empty($_GET['a']) && $_GET['a'] == 'test_mod_rewrite')
+        if (!empty($_GET['a']) && $_GET['a'] === 'test_mod_rewrite') {
             exit($sOutputMsg);
+        }
 
         $sPage = @file_get_contents(PH7_URL_INSTALL . 'test_mod_rewrite');
-
-        $bIsRewrite = ($sPage == $sOutputMsg);
+        $bIsRewrite = ($sPage === $sOutputMsg);
     }
 
     return $bIsRewrite;
@@ -441,7 +450,7 @@ function is_software_installed($sCtrlName, $sAction)
  */
 function check_license($sKey)
 {
-    $sKey = trim(strtolower($sKey));
+    $sKey = strtolower(trim($sKey));
 
     return preg_match('/^ph7-[a-z0-9]{36}$/', $sKey);
 }
@@ -474,7 +483,7 @@ function send_mail(array $aParams)
     $sFrontier = "-----=" . md5(mt_rand());
 
     // Removing any HTML tags to get a text format.
-    // If any of our lines are larger than 70 characterse, we return to the new line.
+    // If any of our lines are larger than 70 characters, we return to the new line.
     $sTextBody = wordwrap(strip_tags($aParams['body']), 70);
 
     // HTML format (you can change the layout below).

@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Module / Note / Form
@@ -71,12 +71,12 @@ class NoteForm
         $oForm->addElement(new \PFBC\Element\HTMLExternal('</div>'));
         $oForm->addElement(new \PFBC\Element\CKEditor(t('Body:'), 'content', ['validation' => new \PFBC\Validation\Str(30), 'required' => 1]));
         $oForm->addElement(new \PFBC\Element\Textbox(t('Language of the post:'), 'lang_id', ['description' => t('e.g., "en", "fr", "es", "js"'), 'value' => PH7_LANG_CODE, 'pattern' => '[a-z]{2}', 'validation' => new \PFBC\Validation\Str(2, 2), 'required' => 1]));
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Slogan:'), 'slogan', ['validation' => new \PFBC\Validation\Str(2, 190)]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Slogan:'), 'slogan', ['validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH)]));
         $oForm->addElement(new \PFBC\Element\File(t('Thumbnail:'), 'thumb', ['accept' => 'image/*']));
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Tags:'), 'tags', ['description' => t('Separate keywords by commas and without spaces between the commas.'), 'validation' => new \PFBC\Validation\Str(2, 190)]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Tags:'), 'tags', ['description' => t('Separate keywords by commas and without spaces between the commas.'), 'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH)]));
         $oForm->addElement(new \PFBC\Element\Textbox(t('Title (meta tag):'), 'page_title', ['validation' => new \PFBC\Validation\Str(2, 100), 'required' => 1]));
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Description (meta tag):'), 'meta_description', ['validation' => new \PFBC\Validation\Str(2, 190)]));
-        $oForm->addElement(new \PFBC\Element\Textbox(t('Keywords (meta tag):'), 'meta_keywords', ['description' => t('Separate keywords by commas and without spaces between the commas.'), 'validation' => new \PFBC\Validation\Str(2, 190)]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Description (meta tag):'), 'meta_description', ['validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH)]));
+        $oForm->addElement(new \PFBC\Element\Textbox(t('Keywords (meta tag):'), 'meta_keywords', ['description' => t('Separate keywords by commas and without spaces between the commas.'), 'validation' => new \PFBC\Validation\Str(Form::MIN_STRING_FIELD_LENGTH, Form::MAX_STRING_FIELD_LENGTH)]));
         $oForm->addElement(new \PFBC\Element\Textbox(t('Robots (meta tag):'), 'meta_robots', ['validation' => new \PFBC\Validation\Str(2, 50)]));
         $oForm->addElement(new \PFBC\Element\Textbox(t('Author (meta tag):'), 'meta_author', ['validation' => new \PFBC\Validation\Str(2, 50)]));
         $oForm->addElement(new \PFBC\Element\Textbox(t('Copyright (meta tag):'), 'meta_copyright', ['validation' => new \PFBC\Validation\Str(2, 50)]));

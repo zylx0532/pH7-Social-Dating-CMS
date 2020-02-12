@@ -15,9 +15,9 @@
 {/if}
 
 <p>
-    🚀 <span class="bold">{$LANG.will_you_make_donation}</span> <a class="underline" href="{$patreon_url}" target="_blank" rel="noopener noreferrer">{$LANG.donate_here}</a><br />
+    <span class="bold">{$LANG.will_you_make_donation}</span> <a class="underline" href="{$patreon_url}" target="_blank" rel="noopener noreferrer">{$LANG.donate_here}</a><br />
     <small>
-        <a href="{$paypal_donate_url}" target="_blank" rel="noopener noreferrer">{$LANG.or_paypal_donation}</a> ❤️
+        <a href="{$paypal_donate_url}" target="_blank" rel="noopener noreferrer">{$LANG.or_paypal_donation}</a>️
     </small>
 </p>
 
@@ -30,7 +30,7 @@
     </p>
 </form>
 
-<!-- Add "completion" sound -->
-<audio style="display:none" autoplay="autoplay" src="{$smarty.const.PH7_URL_ROOT}static/sound/welcome.mp3"></audio>
+<!-- Add a "completion" sound -->
+<audio style="display:none" autoplay="autoplay" src="{$smarty.const.PH7_URL_ROOT}static/sound/ring.mp3"></audio>
 
 {include file="inc/footer.tpl"}

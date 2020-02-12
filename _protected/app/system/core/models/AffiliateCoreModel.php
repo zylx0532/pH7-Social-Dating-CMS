@@ -1,6 +1,6 @@
 <?php
 /**
- * @author         Pierre-Henry Soria <ph7software@gmail.com>
+ * @author         Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright      (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license        GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package        PH7 / App / System / Core / Model
@@ -108,7 +108,7 @@ class AffiliateCoreModel extends AdminCoreModel
         $rStmt->bindValue(':state', (!empty($aData['state']) ? $aData['state'] : ''), \PDO::PARAM_STR);
         $rStmt->bindValue(':zipCode', (!empty($aData['zip_code']) ? $aData['zip_code'] : ''), \PDO::PARAM_STR);
         $rStmt->bindValue(':description', $aData['description'], \PDO::PARAM_STR);
-        $rStmt->bindValue(':phone', $aData['phone'], \PDO::PARAM_STR);
+        $rStmt->bindValue(':phone', (!empty($aData['phone']) ? $aData['phone'] : ''), \PDO::PARAM_STR);
         $rStmt->bindValue(':website', trim($aData['website']), \PDO::PARAM_STR);
 
         return $rStmt->execute();

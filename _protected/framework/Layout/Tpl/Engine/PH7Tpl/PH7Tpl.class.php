@@ -156,13 +156,13 @@ class PH7Tpl extends Kernel implements Templatable, GenerableFile
      */
     public function setTemplateDir($sDir)
     {
-        if (is_dir($sDir)) {
-            $this->sTemplateDir = $this->file->checkExtDir($sDir);
-        } else {
+        if (!is_dir($sDir)) {
             throw new PH7InvalidArgumentException(
                 sprintf('<strong>%s</strong> cannot find "%s" template directory.', self::NAME, $sDir)
             );
         }
+
+        $this->sTemplateDir = $this->file->checkExtDir($sDir);
     }
 
     /**
@@ -176,14 +176,14 @@ class PH7Tpl extends Kernel implements Templatable, GenerableFile
      */
     public function setCompileDir($sDir)
     {
-        if (is_dir($sDir)) {
-            $this->sCompileDir = $this->file->checkExtDir($sDir);
-        } else {
+        if (!is_dir($sDir)) {
             throw new PH7InvalidArgumentException(
                 sprintf(
                     '<strong>%s</strong> cannot find "%s" compile directory.', self::NAME, $sDir)
             );
         }
+
+        $this->sCompileDir = $this->file->checkExtDir($sDir);
     }
 
     /**
@@ -197,13 +197,13 @@ class PH7Tpl extends Kernel implements Templatable, GenerableFile
      */
     public function setCacheDir($sDir)
     {
-        if (is_dir($sDir)) {
-            $this->sCacheDir = $this->file->checkExtDir($sDir);
-        } else {
+        if (!is_dir($sDir)) {
             throw new PH7InvalidArgumentException(
                 sprintf('<strong>%s</strong> cannot find "%s" cache directory.', self::NAME, $sDir)
             );
         }
+
+        $this->sCacheDir = $this->file->checkExtDir($sDir);
     }
 
     /**
@@ -380,7 +380,7 @@ class PH7Tpl extends Kernel implements Templatable, GenerableFile
         /**
          * If the template doesn't contain theme for emails, we retrieve the emails default themes.
          */
-        if (!is_file($sMailTplFile) && defined('PH7_TPL_NAME')) {
+        if (defined('PH7_TPL_NAME') && !is_file($sMailTplFile)) {
             $sMailTplFile = str_replace(PH7_TPL_NAME, PH7_DEFAULT_THEME, $sMailTplFile);
         }
 
@@ -559,7 +559,7 @@ Template Engine: ' . self::NAME . ' version ' . self::VERSION . ' by ' . self::A
  *     ' . self::SOFTWARE_NAME . ' ' . self::SOFTWARE_COMPANY . '
  *               --------------------
  * @since      Mon Mar 21 2011
- * @author     SORIA Pierre-Henry
+ * @author     Pierre-Henry Soria
  * @email      ' . self::SOFTWARE_EMAIL . '
  * @link       ' . self::SOFTWARE_WEBSITE . '
  * @copyright  ' . sprintf(self::SOFTWARE_COPYRIGHT, date('Y')) . '

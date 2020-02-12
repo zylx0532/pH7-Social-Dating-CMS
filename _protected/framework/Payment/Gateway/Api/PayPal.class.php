@@ -2,11 +2,11 @@
 /**
  * @title            PayPal Class
  *
- * @author           Pierre-Henry Soria <ph7software@gmail.com>
+ * @author           Pierre-Henry Soria <hello@ph7cms.com>
  * @copyright        (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Payment / Gateway / Api
- * @version          1.3
+ * @version          1.4
  */
 
 namespace PH7\Framework\Payment\Gateway\Api;
@@ -93,8 +93,7 @@ class PayPal extends Provider implements Api
      */
     public function valid($sParam1 = '', $sParam2 = '')
     {
-        // If already validated, just return last result
-        if (true === $this->bValid || false === $this->bValid) {
+        if ($this->isStatusAlreadyVerified()) {
             return $this->bValid;
         }
 
@@ -104,8 +103,7 @@ class PayPal extends Provider implements Api
         $mStatus = trim($mStatus);
 
         if (0 === strcmp('VERIFIED', $mStatus)) {
-            // Valid
-            if ($_POST['payment_status'] == 'Completed') {
+            if ($this->isValidPayment()) {
                 $this->bValid = true;
                 $this->sMsg = t('Transaction valid and completed.');
             } else {
@@ -113,11 +111,9 @@ class PayPal extends Provider implements Api
                 $this->sMsg = t('Transaction valid but not completed.');
             }
         } elseif (0 === strcmp('INVALID', $mStatus)) {
-            // Bad Connection
             $this->bValid = false;
             $this->sMsg = t('Invalid transaction.');
         } else {
-            // Bad Connection
             $this->bValid = false;
             $this->sMsg = t('Connection to PayPal failed.');
         }
@@ -141,7 +137,7 @@ class PayPal extends Provider implements Api
         curl_setopt($rCh, CURLOPT_HTTPHEADER, [sprintf('Host: %s', self::PAYPAL_HOST)]);
         $mRes = curl_exec($rCh);
 
-        if (curl_errno($rCh) == 60) {
+        if (curl_errno($rCh) === 60) {
             // CURLE_SSL_CACERT
             curl_setopt($rCh, CURLOPT_CAINFO, __DIR__ . '/cert/paypal_api_chain.crt');
             $mRes = curl_exec($rCh);
@@ -160,7 +156,7 @@ class PayPal extends Provider implements Api
      */
     protected function setParams()
     {
-        foreach ($this->getPostDatas() as $sKey => $sValue) {
+        foreach ($this->getPostData() as $sKey => $sValue) {
             $this->setUrlData($sKey, $sValue);
         }
 
@@ -187,7 +183,7 @@ class PayPal extends Provider implements Api
      *
      * @return array
      */
-    protected function getPostDatas()
+    protected function getPostData()
     {
         $rRawPost = Stream::getInput();
         $aRawPost = explode('&', $rRawPost);
@@ -202,5 +198,21 @@ class PayPal extends Provider implements Api
         unset($aRawPost);
 
         return $aPostData;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isStatusAlreadyVerified()
+    {
+        return $this->bValid === true || $this->bValid === false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isValidPayment()
+    {
+        return $_POST['payment_status'] === 'Completed';
     }
 }

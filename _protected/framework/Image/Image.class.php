@@ -7,9 +7,8 @@
  * @copyright        (c) 2012-2019, Pierre-Henry Soria. All Rights Reserved.
  * @license          GNU General Public License; See PH7.LICENSE.txt and PH7.COPYRIGHT.txt in the root directory.
  * @package          PH7 / Framework / Image
- * @version          1.2
- * @link             http://ph7.me
- * @linkGD           http://php.net/manual/book.image.php
+ * @link             https://ph7.me
+ * @linkGD           https://php.net/manual/book.image.php
  */
 
 namespace PH7\Framework\Image;
@@ -32,6 +31,13 @@ class Image
     const PNG_NAME = 'png';
     const GIF_NAME = 'gif';
     const WEBP_NAME = 'webp';
+
+    const SUPPORTED_TYPES = [
+        self::JPG_NAME,
+        self::PNG_NAME,
+        self::GIF_NAME,
+        self::WEBP_NAME
+    ];
 
     const DEFAULT_MAX_WIDTH = 3000;
     const DEFAULT_MAX_HEIGHT = 3000;
@@ -61,10 +67,10 @@ class Image
     private $iMaxHeight;
 
     /** @var int */
-    private $iQuality = 100;
+    private $iQuality = self::DEFAULT_IMAGE_QUALITY;
 
     /** @var int */
-    private $iCompression = 4;
+    private $iCompression = self::DEFAULT_COMPRESSION_LEVEL;
 
 
     /**
@@ -124,8 +130,8 @@ class Image
             $this->iWidth = imagesx($this->rImage);
             $this->iHeight = imagesy($this->rImage);
 
-            // Automatic resizing if the image is too large
-            if ($this->iWidth > $this->iMaxWidth || $this->iHeight > $this->iMaxHeight) {
+            if ($this->isTooLarge()) {
+                // Automatic resizing if the image is too large
                 $this->dynamicResize($this->iMaxWidth, $this->iMaxHeight);
             }
 
@@ -204,11 +210,24 @@ class Image
     public function crop($iX = 0, $iY = 0, $iWidth = 1, $iHeight = 1)
     {
         $rTmp = imagecreatetruecolor($iWidth, $iHeight);
-        imagecopyresampled($rTmp, $this->rImage, 0, 0, $iX, $iY, $iWidth, $iHeight, $iWidth, $iHeight);
+        imagecopyresampled(
+            $rTmp,
+            $this->rImage,
+            0,
+            0,
+            $iX,
+            $iY,
+            $iWidth,
+            $iHeight,
+            $iWidth,
+            $iHeight
+        );
         $this->rImage = &$rTmp;
 
         $this->iWidth = $iWidth;
         $this->iHeight = $iHeight;
+
+        $this->preserveTransparencies();
 
         return $this;
     }
@@ -430,6 +449,8 @@ class Image
      */
     public function show()
     {
+        $this->preserveTransparencies();
+
         switch ($this->sType) {
             case self::JPG_NAME:
                 header('Content-type: image/jpeg');
@@ -470,7 +491,7 @@ class Image
     /**
      * Determine and get the type of the image (even an unallowed image type) by reading the first bytes and checking its signature.
      *
-     * @return string|bool When a correct signature is found, returns the appropriate value, FALSE otherwise.
+     * @return int|bool When a correct signature is found, returns the appropriate integer constant value, FALSE otherwise.
      */
     public function getType()
     {
@@ -485,6 +506,69 @@ class Image
     public function getExt()
     {
         return $this->sType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransparent()
+    {
+        $mTransparentIndex = $this->getTransparentColor();
+
+        return $mTransparentIndex >= 0;
+    }
+
+    /**
+     * @return false|int Returns the identifier of the transparent color index.
+     */
+    public function getTransparentColor()
+    {
+        return imagecolortransparent($this->rImage);
+    }
+
+    private function preserveTransparencies()
+    {
+        switch ($this->sType) {
+            case self::PNG_NAME:
+                $this->allocateAlphaColorTransparency();
+                $this->handlePngTransparency();
+                break;
+
+            case self::GIF_NAME:
+                $this->allocateAlphaColorTransparency();
+                imagealphablending($this->rImage, true);
+                break;
+
+            case self::JPG_NAME:
+                imagealphablending($this->rImage, true);
+                break;
+        }
+    }
+
+    /**
+     * Create a new transparent alpha color.
+     */
+    private function allocateAlphaColorTransparency()
+    {
+        $iAlphaColor = imagecolorallocatealpha($this->rImage, 0, 0, 0, 127);
+        imagefill($this->rImage, 0, 0, $iAlphaColor);
+    }
+
+    private function handlePngTransparency()
+    {
+        // Turn off (temporarily) transparency blending
+        imagealphablending($this->rImage, false);
+
+        // Restore transparency blending
+        imagesavealpha($this->rImage, true);
+    }
+
+    /**
+     * @return bool TRUE if the image is too large (and should be resized), FALSE otherwise.
+     */
+    private function isTooLarge()
+    {
+        return $this->iWidth > $this->iMaxWidth || $this->iHeight > $this->iMaxHeight;
     }
 
     /**
